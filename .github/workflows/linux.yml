@@ -1,0 +1,25 @@
+name: Build and test
+
+on: [push, pull_request]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Run CMake
+      run: |
+        mkdir -p build
+        cd build
+        cmake ..
+    - name: Build
+      run: |
+        cd build
+        make
+    - name: Test
+      run: |
+        cd build
+        ctest -V
