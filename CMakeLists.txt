@@ -8,6 +8,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(CCGS_BUILD_TEST "Build CCGS unit tests." ON)
 
+find_package(LATEX)
+if (LATEX_FOUND)
+  include(CMake/UseLATEX.cmake)
+  add_latex_document(CCG_description.tex TARGET_NAME ccgs_description)
+endif()
+
 set(CCGS_SOURCE
   src/common.cc
 
