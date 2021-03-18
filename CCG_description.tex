@@ -8,25 +8,37 @@
 \usepackage{graphicx}
 \usepackage{pbox}
 \usepackage{float}
+\usepackage{xcolor}
 
 \begin{document}
 \maketitle
 \section{Rules of the game}
-    The main objective of the game is to achieve the highest possible Strength score. Players take turns playing one card each.
-    Played card adds it's Strength to the corresponding player. In addition, cards interact with each other by manipulating Strength score. The game has 2 end conditions: 
+    The main objective of the game is to achieve the highest possible Strength score. 
+    Player begin the game by drawing \textcolor{red}{5} cards from their deck.
+    At the beginning of a turn, players draw a card from their deck.
+    Players take turns playing one card each.
+    Played card adds it's Strength value to the corresponding player's score. 
+    In addition, cards interact with each other e.g. by boosting Attributes or by manipulating Strength score. 
+    The game has 2 end conditions: 
     \begin{enumerate}
-        \item Game has finite number of turns (10)
-        \item Player accumulates lead of (50) points over the other player.
+        \item After \textcolor{red}{10} turns.
+        \item Player accumulates a lead of \textcolor{red}{50} points over the other player.
     \end{enumerate}
     The player with the higher score is considered a winner.
 \section{Rules of deck creation}
-    Each player starts the game with his own deck of (30) cards. The card can be chosen from a pool of (100) cards.
+    Each player starts the game with his own deck of \textcolor{red}{30} cards. 
+    The card can be chosen from a pool of \textcolor{red}{100} cards.
 \section{Rules of pool generation}
-    The pool, from which the decks will be created, consist of (100) cards, that have randomly generated properties.
+    The pool, from which the decks will be created, consist of \textcolor{red}{100} cards, 
+    that have randomly generated properties.
 \subsection{Power Level of a card}
-    Cards begin with randomly generated card Power Level value.  Whenever a property is assigned to a card, it is then substracted from the card Power Level value. This value can never be negative. The balance of the game, which can be set before the beginning of the game, determines the range from which the Power Level value is generated:
+    Cards begin with randomly generated card Power Level value.  Whenever a property 
+    is assigned to a card, it is then substracted from the card Power Level value. 
+    This value can never be negative. The balance of the game, which can be set before 
+    the beginning of the game to any value between 0 and 5, determines the range 
+    from which the Power Level value is generated:
     \begin{equation}
-        Power Level = 25\pm Balance
+        Power Level = 25\pm \textcolor{red}{Balance}
     \end{equation}\\
 \subsection{Card Properties}
 \subsubsection{Card Strength}
@@ -39,12 +51,13 @@
     \begin{tabular}{ | c | l | c |}
         \hline
         Cost & Effect & Symbol\\ \hline
-        16 & Play another card this round. & $>>$ \\  \hline
+        12 & Play another card this round. & $>>$ \\  \hline
         8 & Double the Strength of your next card with this trait. & * \\ \hline
-        5 & \pbox{25cm}{If you control 3 cards with this trait, \\destroy random card played by your opponent.}  & $\dagger$ \\  \hline
+        4 & \pbox{25cm}{If you control 3 cards with this trait, 
+        \\destroy random card played by your opponent.}  & $\dagger$ \\  \hline
         3 & Your next card's attributes are increased by 1 each. & +\\ \hline
         2 & Your opponent's next card loses random attribute (set it to 0.) & $\downarrow$ \\ \hline
-        1 & Your next card strength is increased by 1.& $\uparrow$ \\ \hline
+        1 & Your next card Strength is increased by 1.& $\uparrow$ \\ \hline
     \end{tabular}
 \caption{Cost of traits}
 \label{tab:traitcost}
