@@ -4,8 +4,6 @@
 
 #include <string>
 
-namespace {
-
 TEST(ArgumentParserResolveArgsTest, InvalidArgumentArray) {
   Args args;
   ASSERT_FALSE(args.ResolveArgs(nullptr));
@@ -38,6 +36,8 @@ TEST(ArgumentParserResolveArgsTest, MissingArgumentException) {
                MissingArgumentException);
 }
 
+namespace {
+
 class ArgumentParserTest : public ::testing::Test {
  protected:
   static constexpr const char* args_arr_[] = {"./args",
@@ -63,6 +63,8 @@ class ArgumentParserTest : public ::testing::Test {
 
   void SetUp() override { ASSERT_TRUE(args_.ResolveArgs((char**)args_arr_)); }
 };
+
+}  // namespace
 
 TEST_F(ArgumentParserTest, FlagsAbsence) {
   ASSERT_FALSE(args_.IsFlag(""));
@@ -101,22 +103,27 @@ TEST_F(ArgumentParserTest, OptionsPresence) {
 }
 
 TEST_F(ArgumentParserTest, OptionsParserExceptions) {
-  ASSERT_THROW(
-      args_.ParseOption<int>("integer-overflow-value", Args::CaptureInt),
-      std::out_of_range);
-  ASSERT_THROW(
-      args_.ParseOption<int>("integer-invalid-value", Args::CaptureInt),
-      std::invalid_argument);
+  auto overflow =
+      args_.ParseOption<int>("integer-overflow-value", Args::CaptureInt);
+  ASSERT_FALSE(overflow.second);
+  auto invalid =
+      args_.ParseOption<int>("integer-invalid-value", Args::CaptureInt);
+  ASSERT_FALSE(invalid.second);
 }
 
 TEST_F(ArgumentParserTest, ParsedOptionsCorrectness) {
-  ASSERT_EQ(
-      std::string{"Overwritten value"},
-      args_.ParseOption<std::string>("string-value", Args::CaptureString));
-  ASSERT_EQ(0644U, args_.ParseOption<unsigned long>("unsigned-oct-value",
-                                                    Args::CaptureUnsignedLong));
-  ASSERT_EQ(-0x80000000, args_.ParseOption<int>("integer-negative-hex-value",
-                                                Args::CaptureInt));
-}
+  auto string =
+      args_.ParseOption<std::string>("string-value", Args::CaptureString);
+  ASSERT_TRUE(string.second);
+  ASSERT_EQ(std::string{"Overwritten value"}, string.first);
 
-}  // namespace
+  auto oct = args_.ParseOption<unsigned long>("unsigned-oct-value",
+                                              Args::CaptureUnsignedLong);
+  ASSERT_TRUE(oct.second);
+  ASSERT_EQ(0644U, oct.first);
+
+  auto hex =
+      args_.ParseOption<int>("integer-negative-hex-value", Args::CaptureInt);
+  ASSERT_TRUE(hex.second);
+  ASSERT_EQ(-0x80000000, hex.first);
+}

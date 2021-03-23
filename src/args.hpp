@@ -8,6 +8,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <utility>
 
 #include "common.hpp"
 
@@ -27,20 +28,39 @@ class Args {
  public:
   Args(){};
 
-  static inline int CaptureInt(const char* arg) { return std::stoi(arg, 0, 0); }
-  static inline std::string CaptureString(const char* arg) {
-    return std::string(arg);
+  static std::pair<int, bool> CaptureInt(const char* arg) {
+    int value;
+    try {
+      value = std::stoi(arg, 0, 0);
+      return std::make_pair(value, true);
+    } catch (std::invalid_argument&) {
+    } catch (std::out_of_range&) {
+    }
+    return std::make_pair(value, false);
   }
-  static inline unsigned long CaptureUnsignedLong(const char* arg) {
-    return std::stoul(arg, 0, 0);
+
+  static inline std::pair<std::string, bool> CaptureString(const char* arg) {
+    return std::make_pair(std::string(arg), true);
+  }
+
+  static std::pair<unsigned long, bool> CaptureUnsignedLong(const char* arg) {
+    unsigned long value;
+    try {
+      value = std::stoul(arg, 0, 0);
+      return std::make_pair(value, true);
+    } catch (std::invalid_argument& s) {
+    } catch (std::out_of_range&) {
+    }
+    return std::make_pair(value, false);
   }
 
   bool IsOption(const std::string& name) const { return options_.count(name); }
   bool IsFlag(const std::string& name) const { return flags_.count(name); }
 
   template <typename T>
-  T ParseOption(const std::string& name,
-                std::function<T(const char*)> capture) const {
+  std::pair<T, bool> ParseOption(
+      const std::string& name,
+      std::function<std::pair<T, bool>(const char*)> capture) const {
     auto search = options_.find(name);
     if (search == options_.end()) throw MissingArgumentException(name);
     return capture(search->second);

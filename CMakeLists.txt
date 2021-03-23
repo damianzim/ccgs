@@ -16,9 +16,11 @@ endif()
 
 set(CCGS_SOURCE
   src/common.cc
+  src/game.cc
 
   src/args.hpp
   src/common.hpp
+  src/game.hpp
 )
 
 add_library(ccgslib STATIC ${CCGS_SOURCE})
