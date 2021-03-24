@@ -15,12 +15,16 @@ if (LATEX_FOUND)
 endif()
 
 set(CCGS_SOURCE
+  src/cards.cc
   src/common.cc
   src/game.cc
+  src/random.cc
 
   src/args.hpp
+  src/cards.hpp
   src/common.hpp
   src/game.hpp
+  src/random.hpp
 )
 
 add_library(ccgslib STATIC ${CCGS_SOURCE})

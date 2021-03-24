@@ -1,7 +1,9 @@
 #include <iostream>
 
 #include "args.hpp"
+#include "cards.hpp"
 #include "game.hpp"
+#include "random.hpp"
 
 static const char* prog;
 [[noreturn]] void usage(int exit_status = EXIT_FAILURE);
