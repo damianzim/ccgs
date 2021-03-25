@@ -31,8 +31,8 @@ class CardGenerator {
  public:
   CardGenerator(size_t balance)
       : balance_(balance * 10),
-        min_(kPowerLevel - balance_),
-        max_(kPowerLevel + balance_){};
+        max_(kPowerLevel + balance_),
+        min_(kPowerLevel - balance_){};
 
   std::unique_ptr<Card> GetCard();
 

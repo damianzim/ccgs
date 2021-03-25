@@ -30,7 +30,7 @@ std::optional<GameParams> ParseGameParams(const Args& args) {
 
   try {
     auto [pool_size, result] =
-        args.ParseOption<int>("pool-size", Args::CaptureInt);
+        args.ParseOption<unsigned long>("pool-size", Args::CaptureUnsignedLong);
     auto min_pool_size = params.deck_size + 1;
     auto max_pool_size = params.deck_size * params.deck_size;
     if (!result || pool_size < min_pool_size || pool_size > max_pool_size) {

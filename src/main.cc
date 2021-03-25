@@ -8,7 +8,7 @@
 static const char* prog;
 [[noreturn]] void usage(int exit_status = EXIT_FAILURE);
 
-int main(int argc, char* argv[]) {
+int main([[maybe_unused]] int argc, char* argv[]) {
   prog = argv[0];
 
   Args args;

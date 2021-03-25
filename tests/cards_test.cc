@@ -7,7 +7,7 @@
 #include "random.hpp"
 
 inline bool operator==(const Card::Traits& lhs, const Card::Traits& rhs) {
-  return lhs.swift == lhs.swift && lhs.symbiotic == rhs.symbiotic &&
+  return lhs.swift == rhs.swift && lhs.symbiotic == rhs.symbiotic &&
          lhs.poisonous == rhs.poisonous && lhs.empowering == rhs.empowering &&
          lhs.sabotaging == rhs.sabotaging && lhs.supporting == rhs.supporting;
 }
