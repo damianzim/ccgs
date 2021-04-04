@@ -4,6 +4,19 @@
 #include <assert.h>
 #include <stddef.h>
 
+#ifdef NDEBUG
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_CRITICAL
+#else
+#define DDEBUG  // Do debug
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#endif
+
+#include <spdlog/spdlog.h>
+
+using LogLevel = spdlog::level::level_enum;
+void ConfigureLogger(LogLevel level = LogLevel::err);
+std::shared_ptr<spdlog::logger> LogPlain();
+
 #define ARR_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
 
 static constexpr auto kDefaultBalance = 0;

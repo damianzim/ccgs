@@ -10,6 +10,7 @@ static const char* prog;
 
 int main([[maybe_unused]] int argc, char* argv[]) {
   prog = argv[0];
+  ConfigureLogger(LogLevel::debug);
 
   Args args;
   if (!args.ResolveArgs(argv)) {
