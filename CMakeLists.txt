@@ -23,6 +23,7 @@ if (LATEX_FOUND)
 endif()
 
 set(CCGS_SOURCE
+  src/args.cc
   src/cards.cc
   src/common.cc
   src/game.cc

@@ -3,7 +3,6 @@
 #include "args.hpp"
 #include "cards.hpp"
 #include "game.hpp"
-#include "random.hpp"
 
 static const char* prog;
 [[noreturn]] void usage(int exit_status = EXIT_FAILURE);
@@ -20,7 +19,7 @@ int main([[maybe_unused]] int argc, char* argv[]) {
 
   if (args.IsFlag("help")) usage();
 
-  auto params = ParseGameParams(args);
+  auto params = GameParams::Parse(args);
   if (!params) return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

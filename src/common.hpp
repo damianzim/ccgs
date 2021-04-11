@@ -13,26 +13,22 @@
 
 #include <spdlog/spdlog.h>
 
+#define LOGT spdlog::trace
+#define LOGD spdlog::debug
+#define LOGI spdlog::info
+#define LOGW spdlog::warn
+#define LOGE spdlog::error
+#define LOGC spdlog::critical
+
 using LogLevel = spdlog::level::level_enum;
 void ConfigureLogger(LogLevel level = LogLevel::err);
 std::shared_ptr<spdlog::logger> LogPlain();
 
 #define ARR_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
 
-static constexpr auto kDefaultBalance = 0;
-static constexpr auto kDefaultDeckSize = 30;
-static constexpr auto kDefaultPoolSize = 100;
-static constexpr auto kDefaultStartingCards = 5;
-static constexpr auto kDefaultTurnLimit = 10;
-static constexpr auto kDefaultPointsLeading = 50;
-
-struct GameParams {
-  size_t balance;
-  size_t deck_size;
-  size_t pool_size;
-  size_t starting_cards;
-  size_t turn_limit;
-  size_t points_leading;
+struct Parser {
+  static std::optional<int> ParseInt(const char* str);
+  static std::optional<unsigned long> ParseULong(const char* str);
 };
 
 #endif  // CCGS_COMMON_HPP_
