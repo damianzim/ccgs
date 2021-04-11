@@ -1,15 +1,18 @@
 #include <iostream>
+#include <string>
 
 #include "args.hpp"
 #include "cards.hpp"
+#include "common.hpp"
 #include "game.hpp"
 
 static const char* prog;
 [[noreturn]] void usage(int exit_status = EXIT_FAILURE);
 
+bool InitialiseLogger(const Args& args, LogLevel default_level);
+
 int main([[maybe_unused]] int argc, char* argv[]) {
   prog = argv[0];
-  ConfigureLogger(LogLevel::debug);
 
   Args args;
   if (!args.ResolveArgs(argv)) {
@@ -18,6 +21,7 @@ int main([[maybe_unused]] int argc, char* argv[]) {
   }
 
   if (args.IsFlag("help")) usage();
+  if (!InitialiseLogger(args, LogLevel::info)) return EXIT_FAILURE;
 
   auto params = GameParams::Parse(args);
   if (!params) return EXIT_FAILURE;
@@ -27,11 +31,15 @@ int main([[maybe_unused]] int argc, char* argv[]) {
 
 void usage(int exit_status) {
   // clang-format off
-  std::cerr << prog << " [--help] [--balance N] [--deck-size N]\n\
+  std::cerr << prog
+            << " [--help] [--level LEVEL] [--balance N] [--deck-size N]\n\
   [--pool-size N] [--cards N] [--turn-limit N] [--leading N]\n\
 \n\
 optional arguments:\n\
   --help          This help message.\n\
+  --level LEVEL   Set log level. Available levels: trace, debug, info, warning,\
+\n\
+                  error, critical, off.\n\
   --balance N     This argument determines upper and lower bound of Power Level\
 \n\
                   which is +/- N. Must be an integer in [0;5], default: 0.\n\
@@ -52,4 +60,28 @@ be\n\
             << std::endl;
   // clang-format on
   exit(exit_status);
+}
+
+bool InitialiseLogger(const Args& args, LogLevel level) {
+  auto arg_value = args.GetValue("level");
+  if (arg_value != nullptr) {
+    const std::string name{arg_value};
+    if (name != "off") {
+      level = spdlog::level::from_str(name);
+      if (level == LogLevel::off) {
+        std::cerr << "Could not parse log level." << std::endl;
+        return false;
+      }
+    } else {
+      level = LogLevel::off;
+    }
+  }
+
+  try {
+    ConfigureLogger(level);
+  } catch (const spdlog::spdlog_ex& e) {
+    std::cerr << "Could not initialise logger: " << e.what() << std::endl;
+    return false;
+  }
+  return true;
 }
