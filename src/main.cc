@@ -66,6 +66,9 @@ bool InitialiseLogger(const Args& args, LogLevel level) {
   auto arg_value = args.GetValue("level");
   if (arg_value != nullptr) {
     const std::string name{arg_value};
+    // Check log level 'off' as separate case, because spdlog::from_str actually
+    // may return this level when it is present or when level could not been
+    // parsed.
     if (name != "off") {
       level = spdlog::level::from_str(name);
       if (level == LogLevel::off) {

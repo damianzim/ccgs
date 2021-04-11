@@ -5,11 +5,15 @@
 #include <stddef.h>
 
 #ifdef NDEBUG
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_CRITICAL
+#define COMPILE_TIME_LOG_LEVEL SPDLOG_LEVEL_OFF
 #else
 #define DDEBUG  // Do debug
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
-#endif
+#define COMPILE_TIME_LOG_LEVEL SPDLOG_LEVEL_TRACE
+#endif  // NDEBUG
+
+#ifndef SPDLOG_ACTIVE_LEVEL
+#define SPDLOG_ACTIVE_LEVEL COMPILE_TIME_LOG_LEVEL
+#endif  // SPDLOG_ACTIVE_LEVEL
 
 #include <spdlog/spdlog.h>
 

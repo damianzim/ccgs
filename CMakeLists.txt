@@ -14,10 +14,18 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options("-Wno-unknown-warning-option")
+endif()
+
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+  message("Debug build")
+endif()
+
 option(CCGS_BUILD_TEST "Build CCGS unit tests." ON)
 
 find_package(LATEX)
-if (LATEX_FOUND)
+if(LATEX_FOUND)
   include(CMake/UseLATEX.cmake)
   add_latex_document(CCG_description.tex TARGET_NAME ccgs_description)
 endif()
