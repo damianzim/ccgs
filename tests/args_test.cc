@@ -83,3 +83,8 @@ TEST_F(ArgumentParserTest, OptionsAbsence) {
 TEST_F(ArgumentParserTest, OptionsPresence) {
   ASSERT_TRUE(args_.IsOption("string-value"));
 }
+
+TEST_F(ArgumentParserTest, OptionsCorrectness) {
+  ASSERT_STREQ(args_.GetValue("string-value"), "Overwritten value");
+  ASSERT_STREQ(args_.GetValue("flag"), nullptr);
+}
