@@ -10,6 +10,7 @@
  left=20mm,
  top=20mm,
  }
+\usepackage{polski}
 \usepackage{natbib}
 \usepackage[capbesideposition=right]{floatrow}
 \usepackage{graphicx}
@@ -18,25 +19,44 @@
 \usepackage[dvipsnames]{xcolor}
 \usepackage{caption}
 \usepackage{wrapfig}
+\usepackage{graphicx}
 \usepackage{tikz}
     \usetikzlibrary{
         arrows,
         shadows,
         shapes,
         automata,
-        positioning
+        positioning,
     }
 \usepackage{pgfplots}
+\usepackage{tabularx}
+\usepackage{booktabs}
 \usepackage{amsfonts}
 
 \begin{document}
 
 \maketitle
 
-\begin{center}
-    \textit{Values shown in \textcolor{red}{red} can be altered before the simulation.}
-\end{center}
+\clearpage
 
+\section{Analysis of simulation}
+In this agent simulation we'll be examining flow of a two player card game. Players will play cards to gain \textbf{Strength} advantage over the opponent. To simplify the simulation, players will be playing cards in a random manner. Cards will be put into the play on the table where they will be interacting with each other.
+\begin{enumerate}
+    \item Card behaviors:
+    \begin{itemize}
+        \item Each card played influences your opponent's next played card.
+        \item Allied cards may empower each other, gaining higher Strength when played together, compared to playing the same cards independently.
+    \end{itemize}
+    \item Simulation \textcolor{red}{parameters}:
+    \begin{itemize}
+        \item Number of played rounds
+        \item Point advantage needed to end the game
+        \item Number of cards in each player's deck
+        \item Pool of available cards
+        \item Balance of the cards
+        \item Card hand size
+    \end{itemize}
+\end{enumerate}
 \section{Rules of the game}
 
     The main objective of the game is to achieve the highest possible \textbf{Strength} score. 
@@ -48,12 +68,13 @@
     The game has 2 end conditions: 
     
     \begin{enumerate}
-        \item After \textcolor{red}{10} turns.
+        \item After \textcolor{red}{10} rounds.
         \item Player accumulates a lead of \textcolor{red}{50} points over the other player.
+        \item Player runs out of cards to play.
     \end{enumerate}
     
     \begin{flushleft}
-        The player with the highest score is considered a winner.
+        Whenever an end condition is triggered, the round current round is resolved, and then the game ends. The player with the highest score is considered a winner.
     \end{flushleft}
 
 \section{Rules of deck creation}
@@ -74,8 +95,6 @@
     \begin{center}
         $Power Level = 25\pm \textcolor{red}{Balance}$ \\
     \end{center}
-
-\clearpage
 
 \subsection{Card Properties}
 
@@ -106,7 +125,7 @@
     \end{itemize}
     
     \begin{flushleft}
-        Whenever a card is played (except for first \& last card played in the game), it's \textbf{Strength} is reduced according to this formula(Card A was played 1st, then Card B):
+        Whenever a card is played (except for first \& last card played in the game), it's \textbf{Strength} is reduced according to this formula(Player A played 1st, then Player B):
     \end{flushleft}
     
     \begin{center}
@@ -153,7 +172,7 @@
     \noindent\makebox[\textwidth]{\begin{tabular}{| c | c | l | c |}
         \hline
         Cost & Name & Effect & Symbol\\ \hline
-        12 & \textit{Swift} & Play another card this round. & $>>$ \\  \hline
+        12 & \textit{Swift} & You may play second card this round. & $>>$ \\  \hline
         8 & \textit{Symbiotic} & Double the \textbf{Strength} of your next card with this trait. & $\star$ \\ \hline
         4 & \textit{Poisonous} &\pbox{25cm}{If you control 3 cards with this trait, 
         \\destroy random card played by your opponent.}  & $\dagger$ \\  \hline
@@ -168,7 +187,7 @@
 \clearpage
 
 \subsection{Example of a single card generation}
-
+\vspace{2cm}
 \centering
 \begin{tikzpicture}
 [baseshape/.style={minimum width=3.5cm, minimum height=1cm,text centered, font=\normalsize,draw=black, drop shadow=black!40},
@@ -192,7 +211,7 @@ node distance=3cm,]
          Final card:  \\
          \textbf{\textbf{Strength}: 6.8} \\
          \textbf{W: 3 F: 2 N : 1} \\
-         \textit{\textbf{Swift, Sabotaging}}
+         $>>$,  $\downarrow$
     \end{tabular}};
     \draw[arrow] (step0) -- (step1);
     \draw[arrow] (step1) -- node[at start, anchor=north west]{This value is going to be subtracted from at later steps}(step2);
@@ -202,5 +221,60 @@ node distance=3cm,]
     \draw[arrow] (step5) |- node[at start, anchor=south west]{F}(a);
     \draw[arrow] (step5) -- node[at start, anchor=north west] {T} (step6);
 \end{tikzpicture}
+\clearpage
+
+\begin{flushleft}
+\section{Use Case Diagram}
+\end{flushleft}
+\vspace{2cm}
+\centering
+\begin{tikzpicture}
+[baseshape/.style={minimum width=2.5cm, minimum height=1cm,text centered, font=\normalsize,draw=PineGreen, drop shadow=black!40},
+uc/.style={baseshape, rectangle, rounded corners, fill=green!30},
+actor/.style={},
+arrow/.style={thick, -latex},
+node distance=4cm,]
+    \draw[SkyBlue, very thick, fill =SkyBlue!10] (2,-9) rectangle (10.5,9)node[at start, anchor=south west]{System};
+    \node (step0) [actor] {\includegraphics[width=0.1\textwidth]{actor.png}}; 
+    \node (step1) [uc,  right of=step0] {Set parameters}; 
+    \node (step2) [uc,  below of=step1] {Get results};
+    \node (step3) [uc,  above of=step1] {Run simulation};
+    \node (step4) [uc,  right of=step1] {Set game length};
+    \node (step5) [uc,  above of=step4] {Set game balance}; 
+    \node (step6) [uc,  above of=step5] {Set card balance}; 
+    \node (step7) [uc,  below of=step4] {Set card pool size}; 
+    \node (step8) [uc,  below of=step7] {Set win condition threshold};
+    \node at (0,-1.5) [actor] {Actor};
+    \draw[arrow] (step0) -- (step1);
+    \draw[arrow] (step0) -- (step2);
+    \draw[arrow] (step0) -- (step3);
+    \draw[arrow] (step1) -- (step4);
+    \draw[arrow] (step1) -- (step5);
+    \draw[arrow] (step1) -- (step6);
+    \draw[arrow] (step1) -- (step7);
+    \draw[arrow] (step1) -- (step8);
+\end{tikzpicture}
+\clearpage
+\begin{flushleft}
+\section{CRC cards}
+\end{flushleft}
+\begin{table}[h]
+    \begin{tabular}{| l | l |}
+        \toprule
+        \multicolumn{2}{|l|}{\textbf{Classname:} 1 } \\
+        \midrule
+        \multicolumn{2}{|l|}{\textbf{Superclass:} 2 } \\
+        \midrule
+        \multicolumn{2}{|l|}{\textbf{Subclass(es):} 3 } \\
+        \midrule
+        \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+        a & x \\
+        b & \\
+        c & \\
+        \bottomrule
+    \end{tabular}
+    
+    \label{tab:crc}
+\end{table}
 
 \end{document}
