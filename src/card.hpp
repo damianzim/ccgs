@@ -136,6 +136,8 @@ class Card : public Traits {
   Strength GetStrength() const { return strength_; }
   Attributes GetAttrs() const { return attrs_; }
 
+  void ApplyAttrs(const Card& previous);
+
  private:
   Attributes attrs_;
   Strength strength_;

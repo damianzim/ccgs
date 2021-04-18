@@ -63,10 +63,11 @@ Table::Table(const GameParams& params, std::unique_ptr<Player> p1,
              std::unique_ptr<Player> p2)
     : params_(params),
       current_(std::make_shared<PlayerCtx>()),
-      opponent_(std::make_shared<PlayerCtx>()) {
+      opponent_(std::make_shared<PlayerCtx>()),
+      last_card_(nullptr) {
   current_->player = std::move(p1);
   opponent_->player = std::move(p2);
-  for (auto ctx : {current_, opponent_})
+  for (auto& ctx : {current_, opponent_})
     for (int i = 0; i < params_.StartingCards(); ++i)
       ctx->hand.Push(ctx->player->PullCard());
 }
@@ -75,10 +76,23 @@ Table::~Table() {
   for (auto& [owner, task] : tasks_) delete task;
 }
 
-bool Table::PlayRound() {
-  ScopeTrace scope{"PlayRound"};
+bool Table::PlayTurn() {
+  ScopeTrace scope{"PlayTurn"};
+  if (turns_ == params_.TurnLimit()) {
+    LOGW("The turn limit has been reached");
+    return false;
+  }
+  for (int i = 0; i < 2; ++i)
+    if (!PlaySubTurn()) return false;
+  ++turns_;
+  return true;
+}
+
+bool Table::PlaySubTurn() {
+  ScopeTrace scope{"PlaySubTurn"};
   LOGD("controlled {} discarded {} hand {}", current_->controlled.Size(),
        current_->discarded.Size(), current_->hand.Size());
+  Card* last_card;
   Card* card = current_->player->PullCard();
   if (card == nullptr) return false;
 
@@ -87,8 +101,15 @@ bool Table::PlayRound() {
     current_->controlled.Push(card);
     current_->current_card = card;
     RunTasks();
+    if (last_card_ != nullptr) {
+      card->ApplyAttrs(*last_card_);
+      last_card_ = nullptr;
+    }
     card->ApplyTraits(*this);
+    last_card = card;
   }
+  last_card_ = last_card;  // Only the last card played by current player will
+                           // impact opponent's next card.
   SwapPlayers();
   return true;
 }
@@ -191,7 +212,7 @@ bool Game::InitGame() {
 
 GameResult Game::Run() {
   while (state_.CanRun()) {
-    if (!table_->PlayRound()) state_.Set(GameResult::kDone);
+    if (!table_->PlayTurn()) state_.Set(GameResult::kDone);
   }
 
   return GameResult{state_};

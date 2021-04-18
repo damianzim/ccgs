@@ -29,7 +29,6 @@ class Deck {
   Deck& operator=(const Deck&) = delete;
   ~Deck();
 
-  Card* NextCard() const;
   size_t Size() const { return cards_.size(); }
 
   Card* PullRandom();

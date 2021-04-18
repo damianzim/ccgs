@@ -27,7 +27,7 @@ CardGenerator::CardGenerator(const GameParams& params)
 std::unique_ptr<Card> CardGenerator::GetCard() {
   int power_level = !balance_ ? kPowerLevel : gen_.RandomBetween(min_, max_);
 
-  int strength = gen_.RandomBetween(10, 90);
+  int strength = gen_.RandomBetween(10, 100);
   power_level -= strength;
 
   Card::Attributes attrs{};

@@ -104,13 +104,14 @@ class Table {
         std::unique_ptr<Player> p2);
   ~Table();
 
-  bool PlayRound();
+  bool PlayTurn();
 
  private:
   using TaskQueue = std::list<std::pair<std::shared_ptr<PlayerCtx>, Trait*> >;
 
   const GameParams& params_;
 
+  bool PlaySubTurn();
   void PushTask(Trait* task);
   void RunTasks();
   void SwapPlayers();
@@ -119,8 +120,10 @@ class Table {
   std::shared_ptr<PlayerCtx> current_;
   std::shared_ptr<PlayerCtx> opponent_;
 
+  Card const* last_card_;
   CardsQueue played_queue_;
   TaskQueue tasks_;
+  int turns_{0};
 };
 
 class Game {

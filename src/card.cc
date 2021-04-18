@@ -57,7 +57,7 @@ bool PoisonousAffect::Exec(TaskCtx& ctx) const {
   ScopeTrace scope{"Exec:PoisonousAffect"};
   auto discarded_card = ctx.controlled.PullRandom();
   if (discarded_card == nullptr)
-    LOGW("[Exec:PoisonousAffect] There is not card to discard");  //?
+    LOGW("[Exec:PoisonousAffect] There is no card to discard");  //?
   else
     ctx.discarded.Push(discarded_card);
   return true;
@@ -156,3 +156,14 @@ Card::Card(Attributes attrs, Strength strength, Traits&& traits)
       tr(ttable.sabotaging), tr(ttable.supporting));
 #endif
 };
+
+void Card::ApplyAttrs(const Card& previous) {
+  auto other = previous.GetAttrs();
+  float to_reduce = other.water * attrs_.fire + other.fire * attrs_.nature +
+                    other.nature * attrs_.water;
+  to_reduce /= 100;
+  to_reduce *= strength_;
+  LOGD("[ApplyAttrs] {:.2f} - {:.2f} = {:.2f}", strength_, to_reduce,
+       strength_ - to_reduce);
+  strength_ -= to_reduce;
+}
