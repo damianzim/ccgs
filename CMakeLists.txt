@@ -32,15 +32,18 @@ endif()
 
 set(CCGS_SOURCE
   src/args.cc
+  src/card.cc
   src/cards.cc
   src/common.cc
   src/game.cc
   src/random.cc
 
   src/args.hpp
+  src/card.hpp
   src/cards.hpp
   src/common.hpp
   src/game.hpp
+  src/player.hpp
   src/random.hpp
 )
 

@@ -4,17 +4,17 @@
 #include <spdlog/sinks/stdout_sinks.h>
 
 void ConfigureLogger(LogLevel level) {
-  auto plain = spdlog::create<spdlog::sinks::stdout_sink_st>("plain");
-  plain->set_level(level);
-  plain->set_pattern("[%L] %v");
-
   auto logger = spdlog::stdout_color_st("ccgs");
   logger->set_level(level);
   logger->set_pattern("[%^%L%$] [%Y-%m-%d %H:%M:%S.%f] %v");
   spdlog::set_default_logger(logger);
 }
 
-std::shared_ptr<spdlog::logger> LogPlain() { return spdlog::get("plain"); }
+ScopeTrace::ScopeTrace(const std::string_view& name) : name_(name) {
+  LOGT("[{}] [Begin]", name_);
+}
+
+ScopeTrace::~ScopeTrace() { LOGT("[{}] [End]", name_); }
 
 std::optional<int> Parser::ParseInt(const char* str) {
   if (str == nullptr) return std::nullopt;

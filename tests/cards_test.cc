@@ -4,44 +4,40 @@
 
 #include <optional>
 
+#include "args.hpp"
+#include "game.hpp"
 #include "random.hpp"
 
-inline bool operator==(const Card::Traits& lhs, const Card::Traits& rhs) {
+inline bool operator==(const Traits::TraitsTable& lhs,
+                       const Traits::TraitsTable& rhs) {
   return lhs.swift == rhs.swift && lhs.symbiotic == rhs.symbiotic &&
          lhs.poisonous == rhs.poisonous && lhs.empowering == rhs.empowering &&
          lhs.sabotaging == rhs.sabotaging && lhs.supporting == rhs.supporting;
 }
 
 TEST(TraitsTest, CorrectPurchases) {
-  using Traits = Card::Traits;
-  Traits traits;
+  Traits::TraitsTable ttable;
 
-  traits = {1, 1, 1, 1, 1, 1};
-  ASSERT_EQ(Traits::BuyTraits(30), traits);
+  ttable = {1, 1, 1, 1, 1, 1};
+  ASSERT_EQ(Traits(30).GetTraits(), ttable);
 
-  traits = {0, 0, 0, 0, 0, 0};
-  ASSERT_EQ(Traits::BuyTraits(0), traits);
+  ttable = {0, 0, 0, 0, 0, 0};
+  ASSERT_EQ(Traits(0).GetTraits(), ttable);
 
-  traits.supporting = 1;
-  ASSERT_EQ(Traits::BuyTraits(1), traits);
+  ttable = {0, 0, 0, 0, 0, 1};
+  ASSERT_EQ(Traits(1).GetTraits(), ttable);
 
-  traits.supporting = 0;
-  traits.sabotaging = 1;
-  ASSERT_EQ(Traits::BuyTraits(2), traits);
+  ttable = {0, 0, 0, 0, 1, 0};
+  ASSERT_EQ(Traits(2).GetTraits(), ttable);
 }
 
 TEST(CardsPoolTest, PoolInitialisation) {
   CardsPool pool;
-  ASSERT_EQ(pool.GetDeck(0), std::nullopt);
-  ASSERT_EQ(pool.GetDeck(1), std::nullopt);
+  auto params = GameParams::Parse(Args{});
+  CardGenerator gen{*params};
+  pool.InitPool(*params, gen);
 
-  CardGenerator gen{2};
-  pool.InitPool(100, gen);
-
-  ASSERT_EQ(pool.GetDeck(100), std::nullopt);
-  ASSERT_EQ(pool.GetDeck(101), std::nullopt);
-
-  auto deck = pool.GetDeck(99);
+  auto deck = pool.GetDeck(*params);
   ASSERT_TRUE(deck);
-  ASSERT_EQ(deck->Size(), 99);
+  ASSERT_EQ(deck->Size(), params->DeckSize());
 }

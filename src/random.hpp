@@ -1,6 +1,7 @@
 #ifndef CCGS_RANDOM_HPP_
 #define CCGS_RANDOM_HPP_
 
+#include <initializer_list>
 #include <memory>
 #include <random>
 
@@ -11,7 +12,7 @@ class DeviceGenerator {
   DeviceGenerator() : gen_(std::random_device()()){};
 
   inline std::mt19937& Engine() { return gen_; }
-  unsigned long Random() { return gen_(); }
+  unsigned long Random();
 
   /// @brief Generate random number in [min, max].
   long long RandomBetween(unsigned long min, unsigned long max);
@@ -24,15 +25,12 @@ class DeviceGenerator {
 };
 
 class Card;
-
+class GameParams;
 class CardGenerator {
   static constexpr auto kPowerLevel = 250;
 
  public:
-  CardGenerator(size_t balance)
-      : balance_(balance * 10),
-        max_(kPowerLevel + balance_),
-        min_(kPowerLevel - balance_){};
+  CardGenerator(const GameParams& params);
 
   std::unique_ptr<Card> GetCard();
 

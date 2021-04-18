@@ -26,6 +26,12 @@ int main([[maybe_unused]] int argc, char* argv[]) {
   auto params = GameParams::Parse(args);
   if (!params) return EXIT_FAILURE;
 
+  Game game{*params};
+  if (!game.InitGame()) return EXIT_FAILURE;
+
+  auto result = game.Run();
+  spdlog::log(result.Ok() ? LogLevel::info : LogLevel::err, "Finished");
+
   return EXIT_SUCCESS;
 }
 
@@ -66,9 +72,9 @@ bool InitialiseLogger(const Args& args, LogLevel level) {
   auto arg_value = args.GetValue("level");
   if (arg_value != nullptr) {
     const std::string name{arg_value};
-    // Check log level 'off' as separate case, because spdlog::from_str actually
-    // may return this level when it is present or when level could not been
-    // parsed.
+    // Check log level 'off' as a separate case, because spdlog::from_str
+    // actually may return this level when it is present or when level could not
+    // been parsed.
     if (name != "off") {
       level = spdlog::level::from_str(name);
       if (level == LogLevel::off) {

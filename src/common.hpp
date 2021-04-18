@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <stddef.h>
 
+#include <string_view>
+
 #ifdef NDEBUG
 #define COMPILE_TIME_LOG_LEVEL SPDLOG_LEVEL_OFF
 #else
@@ -26,9 +28,17 @@
 
 using LogLevel = spdlog::level::level_enum;
 void ConfigureLogger(LogLevel level = LogLevel::err);
-std::shared_ptr<spdlog::logger> LogPlain();
 
-#define ARR_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+class ScopeTrace {
+  const std::string_view name_;
+
+ public:
+  ScopeTrace(const std::string_view& scope_name);
+  ~ScopeTrace();
+};
+
+template <typename F>
+using Func = std::function<F>;
 
 struct Parser {
   static std::optional<int> ParseInt(const char* str);

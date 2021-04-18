@@ -2,58 +2,56 @@
 #define CCGS_CARDS_HPP_
 
 #include <memory>
-#include <optional>
+#include <queue>
 #include <vector>
 
+#include "card.hpp"
 #include "common.hpp"
 
-class Card {
+class CardsQueue {
  public:
-  using AttrValue = uint8_t;
-  using Strength = float;
+  CardsQueue() = default;
+  ~CardsQueue();
 
-  struct Attributes {
-    AttrValue water;
-    AttrValue fire;
-    AttrValue nature;
-  };
+  size_t Size() const { return queue_.size(); }
 
-  struct Traits {
-    bool swift;
-    bool symbiotic;
-    bool poisonous;
-    bool empowering;
-    bool sabotaging;
-    bool supporting;
+  Card* Pull();
+  void Push(Card* card);
 
-    static Traits BuyTraits(int power_level);
-  };
-
-  Card(Strength strength, Attributes attrs, Traits traits)
-      : attrs_(attrs), strength_(strength), traits_(traits){};
-
-  Card(const Card& other) = default;
-  Card(Card&& other) = default;
-  Card& operator=(const Card&) = delete;
-  Card& operator=(Card&&) = delete;
-
- protected:
-  const Attributes attrs_;
-  const Strength strength_;
-  const Traits traits_;
+ private:
+  std::queue<Card*> queue_;
 };
 
 class Deck {
  public:
-  Deck(std::vector<Card>&& cards) : cards_(cards){};
+  Deck(std::vector<Card*> cards) : cards_(std::move(cards)){};
+  Deck(const Deck&) = delete;
+  Deck& operator=(const Deck&) = delete;
+  ~Deck();
 
+  Card* NextCard() const;
   size_t Size() const { return cards_.size(); }
 
- private:
-  std::vector<Card> cards_;
+  Card* PullRandom();
+  Card* Pull();
+
+ protected:
+  Deck() = default;
+
+  std::vector<Card*> cards_;
+};
+
+class MutableDeck : public Deck {
+ public:
+  MutableDeck() = default;
+
+  std::vector<Card*> Filter(Func<bool(Card*)> condition) const;
+
+  void Push(Card* card);
 };
 
 class CardGenerator;
+class GameParams;
 
 class CardsPool {
  public:
@@ -61,8 +59,8 @@ class CardsPool {
 
   size_t Size() const { return pool_.size(); }
 
-  std::optional<Deck> GetDeck(size_t deck_size);
-  void InitPool(size_t pool_size, CardGenerator& gen);
+  std::unique_ptr<Deck> GetDeck(const GameParams& params);
+  void InitPool(const GameParams& params, CardGenerator& gen);
 
  private:
   std::vector<std::unique_ptr<Card>> pool_;

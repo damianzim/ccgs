@@ -1,6 +1,9 @@
 #include "random.hpp"
 
-#include "cards.hpp"
+#include "card.hpp"
+#include "game.hpp"
+
+unsigned long DeviceGenerator::Random() { return gen_(); }
 
 long long DeviceGenerator::RandomBetween(unsigned long lr, unsigned long rr) {
   if (lr > rr)
@@ -16,6 +19,11 @@ unsigned long DeviceGenerator::RandomMax(unsigned long max) {
   return Random() % (max + 1);
 }
 
+CardGenerator::CardGenerator(const GameParams& params)
+    : balance_(params.Balance() * 10),
+      max_(kPowerLevel + balance_),
+      min_(kPowerLevel - balance_){};
+
 std::unique_ptr<Card> CardGenerator::GetCard() {
   int power_level = !balance_ ? kPowerLevel : gen_.RandomBetween(min_, max_);
 
@@ -29,6 +37,7 @@ std::unique_ptr<Card> CardGenerator::GetCard() {
     *attr = attr_val;
   }
 
-  return std::make_unique<Card>(strength / 10.F, attrs,
-                                Card::Traits::BuyTraits(power_level / 10));
+  power_level /= 10;  // Return to the natural scale of Power Level. Forget the
+                      // fractional part because it will not be needed anymore.
+  return std::make_unique<Card>(attrs, strength / 10.F, Traits(power_level));
 }
