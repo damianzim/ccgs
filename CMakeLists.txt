@@ -27,7 +27,7 @@ option(CCGS_BUILD_TEST "Build CCGS unit tests." ON)
 find_package(LATEX)
 if(LATEX_FOUND)
   include(CMake/UseLATEX.cmake)
-  add_latex_document(CCG_description.tex TARGET_NAME ccgs_description)
+  add_latex_document(CCG_description.tex INPUTS actor.png TARGET_NAME ccgs_description)
 endif()
 
 set(CCGS_SOURCE

@@ -111,6 +111,8 @@ class Table {
 
   const GameParams& params_;
 
+  bool ResolveLeadingCondition() const;
+
   bool PlaySubTurn();
   void PushTask(Trait* task);
   void RunTasks();

@@ -88,6 +88,19 @@ bool Table::PlayTurn() {
   return true;
 }
 
+bool Table::ResolveLeadingCondition() const {
+  if (params_.PointsLeading() == 0) return false;
+  auto current = current_->controlled.GetStrength();
+  auto opponent = opponent_->controlled.GetStrength();
+  auto diff = current - opponent;
+  auto abs_diff = std::fabsf(diff);
+  if (abs_diff < params_.PointsLeading()) return false;
+  auto& winner = diff < 0 ? opponent_ : current_;
+  LOGI("Points leading condition met");
+  LOGI("{} leads with {:.2f} points", winner->player->Name(), abs_diff);
+  return true;
+}
+
 bool Table::PlaySubTurn() {
   ScopeTrace scope{"PlaySubTurn"};
   LOGD("controlled {} discarded {} hand {}", current_->controlled.Size(),
@@ -110,23 +123,22 @@ bool Table::PlaySubTurn() {
   }
   last_card_ = last_card;  // Only the last card played by current player will
                            // impact opponent's next card.
+  LOGI("Strength after subturn {} - {:6.2f} {} - {:6.2f}",
+       current_->player->Name(), current_->controlled.GetStrength(),
+       opponent_->player->Name(), opponent_->controlled.GetStrength());
   SwapPlayers();
-  return true;
+  return !ResolveLeadingCondition();
 }
 
 void Table::PushTask(Trait* task) {
   ScopeTrace scope{"PushTask"};
   std::shared_ptr<PlayerCtx> owner;
-  switch (task->Owner()) {
-    case TaskOwner::kCurrentPlayer:
-      owner = current_;
-      break;
-    case TaskOwner::kOpponent:
-      owner = opponent_;
-      break;
-    default:
-      assert("Unknown task owner");
-  }
+  if (task->Owner() == TaskOwner::kCurrentPlayer)
+    owner = current_;
+  else if (task->Owner() == TaskOwner::kOpponent)
+    owner = opponent_;
+  else
+    assert("Unknown task owner");
 
   switch (task->ExecTime()) {
     case TaskExecTime::kNow: {

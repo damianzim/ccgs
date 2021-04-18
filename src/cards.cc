@@ -30,6 +30,13 @@ Deck::~Deck() {
   for (auto card : cards_) delete card;
 }
 
+Card::Strength Deck::GetStrength() const {
+  return std::accumulate(cards_.begin(), cards_.end(), 0.F,
+                         [](Card::Strength sum, const Card* card) {
+                           return sum + card->GetStrength();
+                         });
+}
+
 Card* Deck::PullRandom() {
   if (!Size()) return nullptr;
   size_t i = DeviceGenerator().Random() % Size();
