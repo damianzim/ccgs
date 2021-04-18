@@ -1,5 +1,7 @@
 #include "game.hpp"
 
+#include <cmath>
+
 namespace {
 
 constexpr auto kDefaultBalance = 0;
@@ -93,7 +95,7 @@ bool Table::ResolveLeadingCondition() const {
   auto current = current_->controlled.GetStrength();
   auto opponent = opponent_->controlled.GetStrength();
   auto diff = current - opponent;
-  auto abs_diff = std::fabsf(diff);
+  auto abs_diff = std::abs(diff);
   if (abs_diff < params_.PointsLeading()) return false;
   auto& winner = diff < 0 ? opponent_ : current_;
   LOGI("Points leading condition met");
