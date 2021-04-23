@@ -107,7 +107,7 @@ bool Table::PlaySubTurn() {
   ScopeTrace scope{"PlaySubTurn"};
   LOGD("controlled {} discarded {} hand {}", current_->controlled.Size(),
        current_->discarded.Size(), current_->hand.Size());
-  Card* last_card;
+  Card* last_card = nullptr;
   Card* card = current_->player->PullCard();
   if (card == nullptr) return false;
 

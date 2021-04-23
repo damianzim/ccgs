@@ -43,14 +43,6 @@ class Poisonous : public Trait {
   TaskOwner Owner() const override;
 };
 
-class PoisonousAffect : public Trait {
- public:
-  PoisonousAffect* Clone() const override;
-  bool Exec(TaskCtx&) const override;
-  TaskExecTime ExecTime() const override;
-  TaskOwner Owner() const override;
-};
-
 class Empowering : public Trait {
  public:
   Empowering* Clone() const override;

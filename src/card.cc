@@ -35,6 +35,24 @@ TaskOwner Symbiotic::Owner() const { return TaskOwner::kCurrentPlayer; }
 Poisonous* Poisonous::Clone() const { return new Poisonous(*this); }
 
 bool Poisonous::Exec(TaskCtx& ctx) const {
+  class PoisonousAffect : public Trait {
+   public:
+    PoisonousAffect* Clone() const override {
+      return new PoisonousAffect(*this);
+    }
+    bool Exec(TaskCtx& ctx) const override {
+      ScopeTrace scope{"Exec:PoisonousAffect"};
+      auto discarded_card = ctx.controlled.PullRandom();
+      if (discarded_card == nullptr)
+        LOGW("[Exec:PoisonousAffect] There is no card to discard");  //?
+      else
+        ctx.discarded.Push(discarded_card);
+      return true;
+    }
+    TaskExecTime ExecTime() const override { return TaskExecTime::kNow; }
+    TaskOwner Owner() const override { return TaskOwner::kOpponent; }
+  };
+
   ScopeTrace scope{"Exec:Poisonous"};
   auto poisonous = ctx.controlled.Filter(
       [](Card* card) { return card->GetTraits().poisonous; });
@@ -48,23 +66,6 @@ bool Poisonous::Exec(TaskCtx& ctx) const {
 
 TaskExecTime Poisonous::ExecTime() const { return TaskExecTime::kNow; }
 TaskOwner Poisonous::Owner() const { return TaskOwner::kCurrentPlayer; }
-
-PoisonousAffect* PoisonousAffect::Clone() const {
-  return new PoisonousAffect(*this);
-}
-
-bool PoisonousAffect::Exec(TaskCtx& ctx) const {
-  ScopeTrace scope{"Exec:PoisonousAffect"};
-  auto discarded_card = ctx.controlled.PullRandom();
-  if (discarded_card == nullptr)
-    LOGW("[Exec:PoisonousAffect] There is no card to discard");  //?
-  else
-    ctx.discarded.Push(discarded_card);
-  return true;
-}
-
-TaskExecTime PoisonousAffect::ExecTime() const { return TaskExecTime::kNow; }
-TaskOwner PoisonousAffect::Owner() const { return TaskOwner::kOpponent; }
 
 Empowering* Empowering::Clone() const { return new Empowering(*this); }
 
