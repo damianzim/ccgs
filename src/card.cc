@@ -2,6 +2,17 @@
 
 #include "game.hpp"
 
+namespace cost {
+
+constexpr auto kSwift = 12;
+constexpr auto kSymbiotic = 8;
+constexpr auto kPoisonous = 4;
+constexpr auto kEmpowering = 3;
+constexpr auto kSabotaging = 2;
+constexpr auto kSupporting = 1;
+
+}  // namespace cost
+
 Swift* Swift::Clone() const { return new Swift(*this); }
 
 bool Swift::Exec(TaskCtx& ctx) const {
@@ -109,13 +120,15 @@ TaskExecTime Supporting::ExecTime() const { return TaskExecTime::kLater; }
 TaskOwner Supporting::Owner() const { return TaskOwner::kCurrentPlayer; }
 
 Traits::Traits(int power_level) {
+  using namespace cost;
+
   traits_.reserve(6);
-  BuyTrait<Swift>(power_level, 12, table_.swift);
-  BuyTrait<Symbiotic>(power_level, 8, table_.symbiotic);
-  BuyTrait<Poisonous>(power_level, 4, table_.poisonous);
-  BuyTrait<Empowering>(power_level, 3, table_.empowering);
-  BuyTrait<Sabotaging>(power_level, 2, table_.sabotaging);
-  BuyTrait<Supporting>(power_level, 1, table_.supporting);
+  BuyTrait<Swift>(power_level, kSwift, table_.swift);
+  BuyTrait<Symbiotic>(power_level, kSymbiotic, table_.symbiotic);
+  BuyTrait<Poisonous>(power_level, kPoisonous, table_.poisonous);
+  BuyTrait<Empowering>(power_level, kEmpowering, table_.empowering);
+  BuyTrait<Sabotaging>(power_level, kSabotaging, table_.sabotaging);
+  BuyTrait<Supporting>(power_level, kSupporting, table_.supporting);
   traits_.shrink_to_fit();
 }
 

@@ -20,7 +20,7 @@ int main([[maybe_unused]] int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  if (args.IsFlag("help")) usage();
+  if (args.IsFlag("help")) usage(EXIT_SUCCESS);
   if (!InitialiseLogger(args, LogLevel::info)) return EXIT_FAILURE;
 
   auto params = GameParams::Parse(args);

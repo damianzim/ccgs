@@ -1,0 +1,24 @@
+Output columns (in csv file):
+
+# general
+- turn              | int
+- subturn           | int
+- player_name       | string
+- stage             | string -> {IN, OUT}
+
+# player details at specific point
+- controlled        | int
+- discarded         | int
+- in_hand           | int
+
+# played card details
+- strength          | float
+- attr.water        | int
+- attr.fire         | int
+- attr.nature       | int
+- trait.swift       | bool
+- trait.symbiotic   | bool
+- trait.poisonous   | bool
+- trait.empowering  | bool
+- trait.sabotaging  | bool
+- trait.supporting  | bool
