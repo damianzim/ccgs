@@ -28,7 +28,7 @@ jobs:
     - name: Build
       run: |
         cd build
-        make
+        make -j2
     - name: Test
       run: |
         cd build
