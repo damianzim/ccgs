@@ -19,16 +19,16 @@ TEST(TraitsTest, CorrectPurchases) {
   Traits::TraitsTable ttable;
 
   ttable = {1, 1, 1, 1, 1, 1};
-  ASSERT_EQ(Traits(30).GetTraits(), ttable);
+  ASSERT_EQ(Traits(42).GetTraits(), ttable);
 
   ttable = {0, 0, 0, 0, 0, 0};
   ASSERT_EQ(Traits(0).GetTraits(), ttable);
 
   ttable = {0, 0, 0, 0, 0, 1};
-  ASSERT_EQ(Traits(1).GetTraits(), ttable);
+  ASSERT_EQ(Traits(2).GetTraits(), ttable);
 
   ttable = {0, 0, 0, 0, 1, 0};
-  ASSERT_EQ(Traits(2).GetTraits(), ttable);
+  ASSERT_EQ(Traits(3).GetTraits(), ttable);
 }
 
 TEST(CardsPoolTest, PoolInitialisation) {

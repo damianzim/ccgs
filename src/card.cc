@@ -4,12 +4,12 @@
 
 namespace cost {
 
-constexpr auto kSwift = 12;
-constexpr auto kSymbiotic = 8;
-constexpr auto kPoisonous = 4;
-constexpr auto kEmpowering = 3;
-constexpr auto kSabotaging = 2;
-constexpr auto kSupporting = 1;
+constexpr auto kSwift = 15;
+constexpr auto kSymbiotic = 11;
+constexpr auto kPoisonous = 7;
+constexpr auto kEmpowering = 4;
+constexpr auto kSabotaging = 3;
+constexpr auto kSupporting = 2;
 
 }  // namespace cost
 
