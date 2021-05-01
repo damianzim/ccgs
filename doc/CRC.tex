@@ -1,0 +1,336 @@
+\input{header}
+\begin{document}
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }Trait} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }PoisonousAffect, Empowering, Sabotaging, Supporting, Swift, Symbiotic, Poisonous} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         - & Table  \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }PoisonousAffect, Empowering, Sabotaging, Supporting, Swift, Symbiotic, Poisonous} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }Trait} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Represents various card effects. & - \\
+         Provides interface for traits. & \\
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }DeviceGenerator} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         An opaque for built-in RNG.&  \\ 
+         Provides generating numbers with different modes. &  \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }CardGenerator} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Generates randomly card with random parameters. & DeviceGenerator \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }GameResult} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }GameState} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Represents read-only result of the simulation. & - \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }GameState} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }GameResult} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Provides and interface for setting the simulation's result during the simulation. & - \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }Game} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Initialises the simulation with given configuration. & GameState \\ 
+         Runs the simulation and prepares the final result of a game. & Table\\
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\clearpage
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }GameParams} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Creates, validates and stores the simulation's parameters. & - \\ 
+         Allows reading of the parameters. & - \\
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }Table} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Manages playing of consecutive turns. & GameParams, CardsQueue, Card \\ 
+         Manages playing of consecutive turns. & TaskCtx, PlayerCtx, Trait \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }CardsQueue} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Stores cards in FIFO context & - \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }TraitsTable} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Represents table of traits & - \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }Card::Attributes} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Stores values of attributes. & - \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }Traits} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }Card} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Allows for traits' assignment to cards. & - \\
+         Stores traits for cards until play. & \\
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }Card} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }Traits} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Represents a single card. & Card::Attributes \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\clearpage
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }CardsPool} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Generates the pool of cards. & Card \\
+         Assigns cards to each player's deck. &  \\
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }Deck} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }MutableDeck} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Stores the cards for each player & Card \\ 
+         Enables players to draw cards (randomly or in predetermined way).& \\
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }MutableDeck} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }Deck} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Stores cards in LIFO context and allows for random draw order. & - \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }Player} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Represents a player. & Deck \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }PlayerCtx} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Contains information about player, which cannot be managed by him & CardsQueue, Card, MutableDeck, Player \\
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|}
+         \toprule
+         \multicolumn{2}{|l|}{\textbf{Classname: }TaskCtx} \\
+         \midrule
+         \multicolumn{2}{|l|}{\textbf{Superclass: }-} \\
+         \multicolumn{2}{|l|}{\textbf{Subclass(es): }-} \\
+         \midrule
+         \textbf{Responsibilities:} & \textbf{Collaboration:} \\
+         Contains information required by a task to execute & Card, Card::Atribute, CardsQueue, MutableDeck \\ 
+         \bottomrule
+    \end{tabular}
+    \label{tab:my_label}
+\end{table}
+
+
+\end{document}

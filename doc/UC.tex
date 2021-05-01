@@ -1,0 +1,36 @@
+\input{header}
+\begin{document}
+
+
+
+\centering
+\Huge Use case diagram \\
+\vspace{2cm}
+\begin{tikzpicture}
+[baseshape/.style={minimum width=2.5cm, minimum height=1cm,text centered, font=\normalsize,draw=PineGreen, drop shadow=black!40},
+uc/.style={baseshape, rectangle, rounded corners, fill=green!30},
+actor/.style={},
+arrow/.style={thick, -latex},
+node distance=4cm,]
+    \draw[SkyBlue, very thick, fill =SkyBlue!10] (2,-9) rectangle (10.5,9)node[at start, anchor=south west]{System};
+    \node (step0) [actor] {\includegraphics[width=0.1\textwidth]{actor.png}}; 
+    \node (step1) [uc,  right of=step0] {Set parameters}; 
+    \node (step2) [uc,  below of=step1] {Get results};
+    \node (step3) [uc,  above of=step1] {Run simulation};
+    \node (step4) [uc,  right of=step1] {Set game length};
+    \node (step5) [uc,  above of=step4] {Set game balance}; 
+    \node (step6) [uc,  above of=step5] {Set card balance}; 
+    \node (step7) [uc,  below of=step4] {Set card pool size}; 
+    \node (step8) [uc,  below of=step7] {Set win condition threshold};
+    \node at (0,-1.5) [actor] {Actor};
+    \draw[arrow] (step0) -- (step1);
+    \draw[arrow] (step0) -- (step2);
+    \draw[arrow] (step0) -- (step3);
+    \draw[arrow] (step1) -- (step4);
+    \draw[arrow] (step1) -- (step5);
+    \draw[arrow] (step1) -- (step6);
+    \draw[arrow] (step1) -- (step7);
+    \draw[arrow] (step1) -- (step8);
+\end{tikzpicture}
+
+\end{document}
