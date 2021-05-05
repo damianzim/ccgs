@@ -149,47 +149,4 @@ In this agent simulation we'll be examining flow of a two player card game. Play
     
 \end{table}
 
-\clearpage
-
-\subsection{Example of a single card generation}
-
-\vspace{2cm}
-
-\centering
-
-\begin{tikzpicture}
-[baseshape/.style={minimum width=3.5cm, minimum height=1cm,text centered, font=\normalsize,draw=black, drop shadow=black!40},
-startstop/.style={baseshape, ellipse, fill=red!30},
-io/.style={baseshape, trapezium, trapezium stretches=true, 
-trapezium left angle=70, trapezium right angle=110, fill=blue!30},
-process/.style={baseshape, rectangle, rounded corners, text width=5cm, fill=orange!15},
-decision/.style={baseshape, diamond, minimum width=1cm, fill=green!30},
-arrow/.style={thick, -latex},
-node distance=3cm,]
-    \node (step0) [startstop] {Start, \textit{balance} set to 4}; 
-    \node (step1) [process, below of=step0] {Step 1 \\ Generate Power Level value \\ Range: $<$21, 29$>$ \\ \textbf{27.3}};
-    \node (step2) [process, below of=step1] {Step 2 \\ Generate \textbf{Strength} value \\ Range: $<$1, 10$>$\\ \textbf{6.8}};
-    \node (step3) [process, below of=step2] {Step 3 \\ Generate \textit{Attribute} values \\ Range: $<$0, 5$>$ \\ \textbf{W: 3 F: 2 N: 1}};
-    \node (step4) [process, below of=step3, label=below right:{\begin{tabular}{c}
-         14.5 - 11 $=$ 3.5  \\ 3.5 - 3 $=$ 0.5
-    \end{tabular} }] {Step 4 \\ Assign Traits to the card \\ \textit{\textbf{Symbiotic(11) Sabotaging(3)}}};
-    \node (step5)[decision, right of=step4, xshift = 3cm] {\small{Power Lvl }$ < 1$};
-    \node (step6) [startstop, below of=step5, yshift = -1cm] {
-    \begin{tabular}{c}
-         Final card:  \\
-         \textbf{\textbf{Strength}: 6.8} \\
-         \textbf{W: 3 F: 2 N : 1} \\
-         $\star$,  $\downarrow$
-    \end{tabular}};
-    \draw[arrow] (step0) -- (step1);
-    \draw[arrow] (step1) -- node[at start, anchor=north west]{This value is going to be subtracted from at later steps}(step2);
-    \draw[arrow] (step2) -- node[at start, anchor=north west]{27.3 - 6.8 = 20.5}(step3);
-    \draw[arrow] (step3) -- node[at start, anchor=north west]{20.5 - (3 + 2 + 1) = 14.5} coordinate(a)(step4);
-    \draw[arrow] (step4) -- (step5);
-    \draw[arrow] (step5) |- node[at start, anchor=south west]{F}(a);
-    \draw[arrow] (step5) -- node[at start, anchor=north west] {T} (step6);
-\end{tikzpicture}
-
-\clearpage
-
 \end{document}
