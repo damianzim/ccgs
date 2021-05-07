@@ -34,7 +34,7 @@ bool Symbiotic::Exec(TaskCtx& ctx) const {
   ScopeTrace scope{"Exec:Symbiotic"};
   auto ttable = ctx.card->GetTraits();
   if (ttable.symbiotic) {
-    ctx.strength *= 2;
+    ctx.card->SetStrength(ctx.card->GetStrength() * 2);
     return true;
   }
   return false;
@@ -82,9 +82,11 @@ Empowering* Empowering::Clone() const { return new Empowering(*this); }
 
 bool Empowering::Exec(TaskCtx& ctx) const {
   ScopeTrace scope{"Exec:Empowering"};
-  ctx.attrs.water += 1;
-  ctx.attrs.fire += 1;
-  ctx.attrs.nature += 1;
+  auto attrs = ctx.card->GetAttrs();
+  attrs.water += 1;
+  attrs.fire += 1;
+  attrs.nature += 1;
+  ctx.card->SetAttrs(attrs);
   return true;
 }
 
@@ -95,13 +97,15 @@ Sabotaging* Sabotaging::Clone() const { return new Sabotaging(*this); }
 
 bool Sabotaging::Exec(TaskCtx& ctx) const {
   ScopeTrace scope{"Exec:Sabotaging"};
-  auto size = DeviceGenerator{}.Random() % 3;
-  if (size == 0)
-    ctx.attrs.water = 0;
-  else if (size == 1)
-    ctx.attrs.fire = 0;
+  auto attrs = ctx.card->GetAttrs();
+  auto i = DeviceGenerator{}.Random() % 3;
+  if (i == 0)
+    attrs.water = 0;
+  else if (i == 1)
+    attrs.fire = 0;
   else
-    ctx.attrs.nature = 0;
+    attrs.nature = 0;
+  ctx.card->SetAttrs(attrs);
   return true;
 }
 
@@ -112,7 +116,7 @@ Supporting* Supporting::Clone() const { return new Supporting(*this); }
 
 bool Supporting::Exec(TaskCtx& ctx) const {
   ScopeTrace scope{"Exec:Supporting"};
-  ctx.strength += 1;
+  ctx.card->SetStrength(ctx.card->GetStrength() + 1);
   return true;
 }
 
@@ -172,6 +176,7 @@ Card::Card(Attributes attrs, Strength strength, Traits&& traits)
 };
 
 void Card::ApplyAttrs(const Card& previous) {
+  ScopeTrace scope{"ApplyAttrs"};
   auto other = previous.GetAttrs();
   float to_reduce = other.water * attrs_.fire + other.fire * attrs_.nature +
                     other.nature * attrs_.water;
@@ -181,3 +186,7 @@ void Card::ApplyAttrs(const Card& previous) {
        strength_ - to_reduce);
   strength_ -= to_reduce;
 }
+
+void Card::SetAttrs(const Attributes& attrs) { attrs_ = attrs; }
+
+void Card::SetStrength(const Strength& strength) { strength_ = strength; }

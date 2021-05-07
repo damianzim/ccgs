@@ -190,7 +190,6 @@ TaskCtx Table::TaskContext(std::shared_ptr<PlayerCtx> owner) {
   auto card = owner->current_card;
   return {owner->controlled, owner->discarded,
           owner->hand,       card,
-          card->AttrsRef(),  card->StrengthRef(),
           played_queue_,     std::bind(&Table::PushTask, std::ref(*this), _1)};
 }
 

@@ -107,8 +107,6 @@ class Traits {
 };
 
 class Card : public Traits {
-  friend class Table;
-
  public:
   using AttrValue = uint8_t;
   using Strength = float;
@@ -129,13 +127,12 @@ class Card : public Traits {
   Attributes GetAttrs() const { return attrs_; }
 
   void ApplyAttrs(const Card& previous);
+  void SetAttrs(const Attributes& attrs);
+  void SetStrength(const Strength& strength);
 
  private:
   Attributes attrs_;
   Strength strength_;
-
-  Strength& StrengthRef() { return strength_; }
-  Attributes& AttrsRef() { return attrs_; }
 };
 
 #endif  // CCGS_CARD_HPP_

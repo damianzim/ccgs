@@ -25,13 +25,3 @@ std::optional<int> Parser::ParseInt(const char* str) {
   }
   return std::nullopt;
 }
-
-std::optional<unsigned long> Parser::ParseULong(const char* str) {
-  if (str == nullptr) return std::nullopt;
-  try {
-    return std::stoul(str, 0, 0);
-  } catch (std::invalid_argument&) {
-  } catch (std::out_of_range&) {
-  }
-  return std::nullopt;
-}

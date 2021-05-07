@@ -42,7 +42,6 @@ using Func = std::function<F>;
 
 struct Parser {
   static std::optional<int> ParseInt(const char* str);
-  static std::optional<unsigned long> ParseULong(const char* str);
 };
 
 #endif  // CCGS_COMMON_HPP_

@@ -88,8 +88,6 @@ struct TaskCtx {
 
   // This card
   Card* card;
-  Card::Attributes& attrs;
-  Card::Strength& strength;
 
   CardsQueue& played_queue;
   Func<void(Trait*)> task_queue_push;
