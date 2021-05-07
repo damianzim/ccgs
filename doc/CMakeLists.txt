@@ -4,7 +4,10 @@ project(${PROJECT_NAME})
 find_package(LATEX)
 if(LATEX_FOUND)
   include(${CMAKE_SOURCE_DIR}/cmake/UseLATEX.cmake)
-  add_latex_document(ccgs_description.tex INPUTS
-    actor.png
-  )
+  add_latex_document(AD_CardGen.tex INPUTS header.tex)
+  add_latex_document(AD_Simulation.tex INPUTS header.tex)
+  add_latex_document(AD_Turn.tex INPUTS header.tex)
+  add_latex_document(CCG_description.tex INPUTS header.tex)
+  add_latex_document(CRC.tex INPUTS header.tex)
+  add_latex_document(UC.tex INPUTS header.tex actor.png)
 endif()
