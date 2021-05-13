@@ -13,6 +13,7 @@ class Player {
     LOGD("Creating player {} with deck size {}", name, deck_->Size());
   }
 
+  bool HasCards() const { return deck_->Size(); }
   const char* Name() const { return name_.c_str(); }
   Card* PullCard() const { return deck_->Pull(); }
 

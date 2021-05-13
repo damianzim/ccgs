@@ -41,19 +41,36 @@ class GameParams {
 
 class GameResult {
  public:
-  using StateType = int;
-  enum : StateType {
+  using StatusType = int;
+  enum : StatusType {
     kUninitialised,
-    kInitialised,  //?
+    kInitialised,
     kInProgress,
-    kFail,
+    kFail,  //?
     kDraw,
     kDone,
   };
 
   inline bool Ok() const { return status_ == kDone || status_ == kDraw; }
-
-  virtual void Set(StateType) {}
+  StatusType Status() const { return status_; }
+  std::string_view StatusStringify() const {
+    switch (status_) {
+      case kUninitialised:
+        return "uninitialised";
+      case kInitialised:
+        return "initialised";
+      case kInProgress:
+        return "in progress";
+      case kFail:
+        return "fail";
+      case kDraw:
+        return "draw";
+      case kDone:
+        return "done";
+      default:
+        return "unknown";
+    }
+  }
 
  protected:
   int status_{kUninitialised};
@@ -62,12 +79,10 @@ class GameResult {
 class GameState : public GameResult {
  public:
   inline bool CanRun() const {
-    return status_ == kInitialised || status_ == kInProgress;
+    return status_ == kInProgress || status_ == kInitialised;
   }
 
-  bool Status() const { return status_; }
-
-  void Set(StateType state) override { status_ = state; }
+  void Set(StatusType state) { status_ = state; }
 };
 
 enum class TaskOwner {
@@ -102,7 +117,7 @@ class Table {
         std::unique_ptr<Player> p2);
   ~Table();
 
-  bool PlayTurn();
+  GameState::StatusType PlayTurn();
 
  private:
   using TaskQueue = std::list<std::pair<std::shared_ptr<PlayerCtx>, Trait*> >;
@@ -111,8 +126,9 @@ class Table {
 
   bool ResolveLeadingCondition() const;
 
-  bool PlaySubTurn();
+  void PlaySubTurn();
   void PushTask(Trait* task);
+  GameState::StatusType ResolveFinalResult();
   void RunTasks();
   void SwapPlayers();
   TaskCtx TaskContext(std::shared_ptr<PlayerCtx> owner);
@@ -136,7 +152,7 @@ class Game {
  private:
   const GameParams& params_;
 
-  void SetState(GameResult::StateType state);
+  void SetState(GameResult::StatusType state);
 
   std::unique_ptr<Table> table_;
   GameState state_;

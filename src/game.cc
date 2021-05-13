@@ -11,6 +11,11 @@ constexpr auto kDefaultStartingCards = 5;
 constexpr auto kDefaultTurnLimit = 10;
 constexpr auto kDefaultPointsLeading = 50;
 
+/// @note The function expects that the arguments are positive.
+bool ApproximatelyEqual(float a, float b) {
+  return std::abs(a - b) <= (a < b ? b : a) * 0.001F;
+}
+
 }  // namespace
 
 class GameParams::InvalidParamValue : public std::runtime_error {
@@ -34,7 +39,9 @@ std::optional<GameParams> GameParams::Parse(const Args& args) {
     p.starting_cards_ = ParseParam(args, "cards", 3, 10, kDefaultStartingCards);
     p.turn_limit_ = ParseParam(args, "turn-limit", 3, 20, kDefaultTurnLimit);
     p.points_leading_ =
-        ParseParam(args, "leading", 20, 100, kDefaultPointsLeading);
+        ParseParam(args, "leading", 0, 100, kDefaultPointsLeading);
+    if (p.points_leading_ > 0 && p.points_leading_ < 20)
+      throw InvalidParamValue{"leading"};
   } catch (const InvalidParamValue& e) {
     LOGE(e.what());
     return std::nullopt;
@@ -78,16 +85,22 @@ Table::~Table() {
   for (auto& [owner, task] : tasks_) delete task;
 }
 
-bool Table::PlayTurn() {
+GameState::StatusType Table::PlayTurn() {
   ScopeTrace scope{"PlayTurn"};
+  PlaySubTurn();
+  // Do not begin next turn if the 'first' player has no more cards.
+  if (last_card_ == nullptr) return ResolveFinalResult();
+  PlaySubTurn();
+  ++turns_;
   if (turns_ == params_.TurnLimit()) {
     LOGW("The turn limit has been reached");
-    return false;
+    return ResolveFinalResult();
+  } else if (!opponent_->hand.Size() && !opponent_->player->HasCards()) {
+    LOGW("{} will run out of cards in the next turn",
+         opponent_->player->Name());
+    return ResolveFinalResult();
   }
-  for (int i = 0; i < 2; ++i)
-    if (!PlaySubTurn()) return false;
-  ++turns_;
-  return true;
+  return ResolveLeadingCondition() ? GameState::kDone : GameState::kInProgress;
 }
 
 bool Table::ResolveLeadingCondition() const {
@@ -96,32 +109,37 @@ bool Table::ResolveLeadingCondition() const {
   auto opponent = opponent_->controlled.GetStrength();
   auto diff = current - opponent;
   auto abs_diff = std::abs(diff);
-  if (abs_diff < params_.PointsLeading()) return false;
+  if (ApproximatelyEqual(abs_diff, params_.PointsLeading()) ||
+      abs_diff < params_.PointsLeading())
+    return false;
   auto& winner = diff < 0 ? opponent_ : current_;
   LOGI("Points leading condition met");
   LOGI("{} leads with {:.2f} points", winner->player->Name(), abs_diff);
   return true;
 }
 
-bool Table::PlaySubTurn() {
+void Table::PlaySubTurn() {
   ScopeTrace scope{"PlaySubTurn"};
   LOGD("controlled {} discarded {} hand {}", current_->controlled.Size(),
        current_->discarded.Size(), current_->hand.Size());
   Card* last_card = nullptr;
-  Card* card = current_->player->PullCard();
-  if (card == nullptr) return false;
-
-  played_queue_.Push(card);
-  while ((card = played_queue_.Pull()) != nullptr) {
-    current_->controlled.Push(card);
-    current_->current_card = card;
-    RunTasks();
-    if (last_card_ != nullptr) {
-      card->ApplyAttrs(*last_card_);
-      last_card_ = nullptr;
+  current_->hand.Push(current_->player->PullCard());
+  Card* card = current_->hand.Pull();
+  if (card != nullptr) {
+    played_queue_.Push(card);
+    while ((card = played_queue_.Pull()) != nullptr) {
+      current_->controlled.Push(card);
+      current_->current_card = card;
+      RunTasks();
+      if (last_card_ != nullptr) {
+        card->ApplyAttrs(*last_card_);
+        last_card_ = nullptr;
+      }
+      card->ApplyTraits(*this);
+      last_card = card;
     }
-    card->ApplyTraits(*this);
-    last_card = card;
+  } else {
+    LOGW("{} ran out of cards", current_->player->Name());
   }
   last_card_ = last_card;  // Only the last card played by current player will
                            // impact opponent's next card.
@@ -129,18 +147,23 @@ bool Table::PlaySubTurn() {
        current_->controlled.GetStrength(), opponent_->player->Name(),
        opponent_->controlled.GetStrength());
   SwapPlayers();
-  return !ResolveLeadingCondition();
+  // When last_card is null, it indicates that no card was played this subturn.
 }
 
 void Table::PushTask(Trait* task) {
   ScopeTrace scope{"PushTask"};
   std::shared_ptr<PlayerCtx> owner;
-  if (task->Owner() == TaskOwner::kCurrentPlayer)
-    owner = current_;
-  else if (task->Owner() == TaskOwner::kOpponent)
-    owner = opponent_;
-  else
-    assert("Unknown task owner");
+  switch (task->Owner()) {
+    case TaskOwner::kCurrentPlayer:
+      owner = current_;
+      break;
+    case TaskOwner::kOpponent:
+      owner = opponent_;
+      break;
+    default:
+      LOGC("Unknown task owner");
+      return;
+  }
 
   switch (task->ExecTime()) {
     case TaskExecTime::kNow: {
@@ -158,8 +181,23 @@ void Table::PushTask(Trait* task) {
       tasks_.push_back(std::make_pair(std::move(owner), task));
       break;
     default:
-      assert("Unknown task execution time");
+      LOGC("Unknown task execution time");
   }
+}
+
+GameState::StatusType Table::ResolveFinalResult() {
+  auto current = current_->controlled.GetStrength();
+  auto opponent = opponent_->controlled.GetStrength();
+  if (ApproximatelyEqual(current, opponent)) {
+    LOGI("There is a draw {} {:6.2f} {} {:6.2f}", current_->player->Name(),
+         current, opponent_->player->Name(), opponent);
+    return GameState::kDraw;
+  }
+  auto diff = current - opponent;
+  auto& winner = diff < 0 ? opponent_ : current_;
+  LOGI("{} leads with {:.2f} points", winner->player->Name(), std::abs(diff));
+  // Save some information about winner/loser.
+  return GameState::kDone;
 }
 
 void Table::RunTasks() {
@@ -172,8 +210,9 @@ void Table::RunTasks() {
     if (player == current_ && task->Exec(ctx)) {
       delete task;
       it = tasks_.erase(it);
+    } else {
+      ++it;
     }
-    ++it;
   }
   LOGD("Task queue size {} (after)", tasks_.size());
 }
@@ -224,9 +263,11 @@ bool Game::InitGame() {
 }
 
 GameResult Game::Run() {
-  while (state_.CanRun()) {
-    if (!table_->PlayTurn()) state_.Set(GameResult::kDone);
+  if (state_.Status() != GameState::kInitialised) {
+    LOGE("Cannot play not initialised game");
+    return state_;
   }
 
-  return GameResult{state_};
+  while (state_.CanRun()) state_.Set(table_->PlayTurn());
+  return state_;
 }

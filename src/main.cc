@@ -30,7 +30,9 @@ int main([[maybe_unused]] int argc, char* argv[]) {
   if (!game.InitGame()) return EXIT_FAILURE;
 
   auto result = game.Run();
-  spdlog::log(result.Ok() ? LogLevel::info : LogLevel::err, "Finished");
+  spdlog::log(result.Ok() ? LogLevel::info : LogLevel::err,
+              "Finished with status {} ({})", result.StatusStringify(),
+              result.Status());
 
   return EXIT_SUCCESS;
 }
