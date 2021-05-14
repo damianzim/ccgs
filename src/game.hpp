@@ -9,6 +9,7 @@
 #include "args.hpp"
 #include "cards.hpp"
 #include "common.hpp"
+#include "export.hpp"
 #include "player.hpp"
 #include "random.hpp"
 
@@ -146,7 +147,7 @@ class Game {
  public:
   Game(const GameParams& params);
 
-  bool InitGame();
+  bool InitGame(const char* output_dir);
   GameResult Run();
 
  private:
@@ -154,6 +155,7 @@ class Game {
 
   void SetState(GameResult::StatusType state);
 
+  std::unique_ptr<Export> export_;
   std::unique_ptr<Table> table_;
   GameState state_;
 };

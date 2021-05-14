@@ -31,6 +31,7 @@ set(CCGS_SOURCE
   src/card.cc
   src/cards.cc
   src/common.cc
+  src/export.cc
   src/game.cc
   src/random.cc
 
@@ -38,6 +39,7 @@ set(CCGS_SOURCE
   src/card.hpp
   src/cards.hpp
   src/common.hpp
+  src/export.hpp
   src/game.hpp
   src/player.hpp
   src/random.hpp

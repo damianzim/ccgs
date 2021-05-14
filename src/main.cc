@@ -7,7 +7,7 @@
 #include "game.hpp"
 
 static const char* prog;
-[[noreturn]] void usage(int exit_status = EXIT_FAILURE);
+[[noreturn]] void Usage(int exit_status = EXIT_FAILURE);
 
 bool InitialiseLogger(const Args& args, LogLevel default_level);
 
@@ -20,14 +20,17 @@ int main([[maybe_unused]] int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  if (args.IsFlag("help")) usage(EXIT_SUCCESS);
+  if (args.IsFlag("help")) Usage(EXIT_SUCCESS);
   if (!InitialiseLogger(args, LogLevel::info)) return EXIT_FAILURE;
+
+  const char* output_dir = args.GetValue("output");
+  if (output_dir == nullptr) output_dir = ".";
 
   auto params = GameParams::Parse(args);
   if (!params) return EXIT_FAILURE;
 
   Game game{*params};
-  if (!game.InitGame()) return EXIT_FAILURE;
+  if (!game.InitGame(output_dir)) return EXIT_FAILURE;
 
   auto result = game.Run();
   spdlog::log(result.Ok() ? LogLevel::info : LogLevel::err,
@@ -37,17 +40,19 @@ int main([[maybe_unused]] int argc, char* argv[]) {
   return EXIT_SUCCESS;
 }
 
-void usage(int exit_status) {
+void Usage(int exit_status) {
   // clang-format off
   std::cerr << prog
-            << " [--help] [--level LEVEL] [--balance N] [--deck-size N]\n\
-  [--pool-size N] [--cards N] [--turn-limit N] [--leading N]\n\
+            << " [--help] [--level LEVEL] [--output DIR] [--balance N]\n\
+  [--deck-size N] [--pool-size N] [--cards N] [--turn-limit N] [--leading N]\n\
 \n\
 optional arguments:\n\
   --help          This help message.\n\
   --level LEVEL   Set log level. Available levels: trace, debug, info, warning,\
 \n\
                   error, critical, off.\n\
+  --output DIR    Directory where the output files will be stored, default:\n\
+                  current dir.\n\
   --balance N     This argument determines upper and lower bound of Power Level\
 \n\
                   which is +/- N. Must be an integer in [0;5], default: 0.\n\

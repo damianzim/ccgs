@@ -234,9 +234,16 @@ TaskCtx Table::TaskContext(std::shared_ptr<PlayerCtx> owner) {
 
 Game::Game(const GameParams& params) : params_(params){};
 
-bool Game::InitGame() {
+bool Game::InitGame(const char* output_dir) {
   if (state_.Status() != GameState::kUninitialised) {
     LOGE("Cannot initialise the game again");
+    return false;
+  }
+
+  try {
+    export_ = std::make_unique<Export>(output_dir);
+  } catch (std::filesystem::filesystem_error& e) {
+    LOGC(e.what());
     return false;
   }
 
