@@ -48,10 +48,11 @@ set(CCGS_SOURCE
 add_library(ccgslib STATIC ${CCGS_SOURCE})
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/spdlog)
+target_include_directories(ccgslib PUBLIC ${PROJECT_SOURCE_DIR}/lib)
 target_link_libraries(ccgslib spdlog)
 
 add_executable(${PROJECT_NAME} src/main.cc)
-target_include_directories(${PROJECT_NAME} PRIVATE src/)
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} PRIVATE ccgslib)
 
 if(CCGS_BUILD_TEST)
