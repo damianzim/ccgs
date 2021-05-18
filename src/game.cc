@@ -85,6 +85,11 @@ Table::~Table() {
   for (auto& [owner, task] : tasks_) delete task;
 }
 
+void Table::GetFinalResult(GameState& state) {
+  state.Set(current_->player->Name(), current_->controlled.GetStrength(),
+            opponent_->player->Name(), opponent_->controlled.GetStrength());
+}
+
 GameState::StatusType Table::PlayTurn() {
   ScopeTrace scope{"PlayTurn"};
   PlaySubTurn();
@@ -101,21 +106,6 @@ GameState::StatusType Table::PlayTurn() {
     return ResolveFinalResult();
   }
   return ResolveLeadingCondition() ? GameState::kDone : GameState::kInProgress;
-}
-
-bool Table::ResolveLeadingCondition() const {
-  if (params_.PointsLeading() == 0) return false;
-  auto current = current_->controlled.GetStrength();
-  auto opponent = opponent_->controlled.GetStrength();
-  auto diff = current - opponent;
-  auto abs_diff = std::abs(diff);
-  if (ApproximatelyEqual(abs_diff, params_.PointsLeading()) ||
-      abs_diff < params_.PointsLeading())
-    return false;
-  auto& winner = diff < 0 ? opponent_ : current_;
-  LOGI("Points leading condition met");
-  LOGI("{} leads with {:.2f} points", winner->player->Name(), abs_diff);
-  return true;
 }
 
 void Table::PlaySubTurn() {
@@ -194,10 +184,26 @@ GameState::StatusType Table::ResolveFinalResult() {
     return GameState::kDraw;
   }
   auto diff = current - opponent;
-  auto& winner = diff < 0 ? opponent_ : current_;
-  LOGI("{} leads with {:.2f} points", winner->player->Name(), std::abs(diff));
-  // Save some information about winner/loser.
+  // If a winner can be emerged, then set current player as the winner.
+  if (diff < 0) current_.swap(opponent_);
+  LOGI("{} leads with {:.2f} points", current_->player->Name(), std::abs(diff));
   return GameState::kDone;
+}
+
+bool Table::ResolveLeadingCondition() {
+  if (params_.PointsLeading() == 0) return false;
+  auto current = current_->controlled.GetStrength();
+  auto opponent = opponent_->controlled.GetStrength();
+  auto diff = current - opponent;
+  auto abs_diff = std::abs(diff);
+  if (ApproximatelyEqual(abs_diff, params_.PointsLeading()) ||
+      abs_diff < params_.PointsLeading())
+    return false;
+  // If a winner can be emerged, then set current player as the winner.
+  if (diff < 0) current_.swap(opponent_);
+  LOGI("Points leading condition met");
+  LOGI("{} leads with {:.2f} points", current_->player->Name(), abs_diff);
+  return true;
 }
 
 void Table::RunTasks() {
@@ -246,6 +252,7 @@ bool Game::InitGame(const char* output_dir) {
     LOGC(e.what());
     return false;
   }
+  export_->DumpGameParams(params_);
 
   CardGenerator gen{params_};
   CardsPool pool{};
@@ -276,5 +283,9 @@ GameResult Game::Run() {
   }
 
   while (state_.CanRun()) state_.Set(table_->PlayTurn());
+
+  if (state_.Ok()) table_->GetFinalResult(state_);
+  export_->DumpFinalResult(state_);
+
   return state_;
 }

@@ -43,6 +43,14 @@ class GameParams {
 class GameResult {
  public:
   using StatusType = int;
+
+  struct FinalPlayerResult {
+    std::string_view name;
+    float strength;
+  };
+
+  using FinalResultType = FinalPlayerResult[2];
+
   enum : StatusType {
     kUninitialised,
     kInitialised,
@@ -52,6 +60,7 @@ class GameResult {
     kDone,
   };
 
+  FinalResultType const& FinalResult() const { return final_; }
   inline bool Ok() const { return status_ == kDone || status_ == kDraw; }
   StatusType Status() const { return status_; }
   std::string_view StatusStringify() const {
@@ -74,6 +83,7 @@ class GameResult {
   }
 
  protected:
+  FinalPlayerResult final_[2]{};
   int status_{kUninitialised};
 };
 
@@ -84,6 +94,13 @@ class GameState : public GameResult {
   }
 
   void Set(StatusType state) { status_ = state; }
+  void Set(const std::string_view& p1_name, const float p1_strength,
+           const std::string_view& p2_name, const float p2_strength) {
+    final_[0].name = p1_name;
+    final_[0].strength = p1_strength;
+    final_[1].name = p2_name;
+    final_[1].strength = p2_strength;
+  }
 };
 
 enum class TaskOwner {
@@ -118,6 +135,7 @@ class Table {
         std::unique_ptr<Player> p2);
   ~Table();
 
+  void GetFinalResult(GameState& state);
   GameState::StatusType PlayTurn();
 
  private:
@@ -125,11 +143,10 @@ class Table {
 
   const GameParams& params_;
 
-  bool ResolveLeadingCondition() const;
-
   void PlaySubTurn();
   void PushTask(Trait* task);
   GameState::StatusType ResolveFinalResult();
+  bool ResolveLeadingCondition();
   void RunTasks();
   void SwapPlayers();
   TaskCtx TaskContext(std::shared_ptr<PlayerCtx> owner);
