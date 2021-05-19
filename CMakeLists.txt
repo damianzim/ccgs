@@ -51,6 +51,9 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/spdlog)
 target_include_directories(ccgslib PUBLIC ${PROJECT_SOURCE_DIR}/lib)
 target_link_libraries(ccgslib spdlog)
 
+add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/libcsv)
+target_link_libraries(ccgslib libcsv)
+
 add_executable(${PROJECT_NAME} src/main.cc)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} PRIVATE ccgslib)
