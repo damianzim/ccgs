@@ -6,7 +6,7 @@
 void ConfigureLogger(LogLevel level) {
   auto logger = spdlog::stdout_color_st("ccgs");
   logger->set_level(level);
-  logger->set_pattern("[%^%L%$] [%Y-%m-%d %H:%M:%S.%f] %v");
+  logger->set_pattern("[%^%L%$] %v");
   spdlog::set_default_logger(logger);
 }
 
