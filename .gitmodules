@@ -4,3 +4,6 @@
 [submodule "third_party/spdlog"]
 	path = third_party/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "third_party/libcsv"]
+	path = third_party/libcsv
+	url = git@github.com:damianzim/libcsv.git

@@ -4,7 +4,7 @@ Output columns (in csv file):
 - turn              | int
 - subturn           | int
 - player_name       | string
-- stage             | string -> {IN, OUT}
+- label             | string -> {IN, CARD, OUT}
 
 # player details at specific point
 - controlled        | int
@@ -22,3 +22,26 @@ Output columns (in csv file):
 - trait.empowering  | bool
 - trait.sabotaging  | bool
 - trait.supporting  | bool
+
+Output (other file than the above, but the two files are make up the full
+result of the simulation):
+
+- game.params:
+  - balance         | int
+  - deck_size       | int
+  - pool_size       | int
+  - cards           | int
+  - turn_limit      | int
+  - leading         | int
+
+- winner
+  - name            | string
+  - strength        | float
+
+- loser:
+  - name            | string
+  - strength        | float
+
+- status:
+  - code            | int
+  - msg             | string

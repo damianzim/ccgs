@@ -68,11 +68,12 @@ struct Table::PlayerCtx {
   std::unique_ptr<Player> player;
 };
 
-Table::Table(const GameParams& params, std::unique_ptr<Player> p1,
-             std::unique_ptr<Player> p2)
+Table::Table(const GameParams& params, Export& export_,
+             std::unique_ptr<Player> p1, std::unique_ptr<Player> p2)
     : params_(params),
       current_(std::make_shared<PlayerCtx>()),
       opponent_(std::make_shared<PlayerCtx>()),
+      export_(export_),
       last_card_(nullptr) {
   current_->player = std::move(p1);
   opponent_->player = std::move(p2);
@@ -85,13 +86,18 @@ Table::~Table() {
   for (auto& [owner, task] : tasks_) delete task;
 }
 
+void Table::GetFinalResult(GameState& state) {
+  state.Set(current_->player->Name(), current_->controlled.GetStrength(),
+            opponent_->player->Name(), opponent_->controlled.GetStrength());
+}
+
 GameState::StatusType Table::PlayTurn() {
   ScopeTrace scope{"PlayTurn"};
+  ++turns_;
   PlaySubTurn();
   // Do not begin next turn if the 'first' player has no more cards.
   if (last_card_ == nullptr) return ResolveFinalResult();
   PlaySubTurn();
-  ++turns_;
   if (turns_ == params_.TurnLimit()) {
     LOGW("The turn limit has been reached");
     return ResolveFinalResult();
@@ -103,23 +109,39 @@ GameState::StatusType Table::PlayTurn() {
   return ResolveLeadingCondition() ? GameState::kDone : GameState::kInProgress;
 }
 
-bool Table::ResolveLeadingCondition() const {
-  if (params_.PointsLeading() == 0) return false;
-  auto current = current_->controlled.GetStrength();
-  auto opponent = opponent_->controlled.GetStrength();
-  auto diff = current - opponent;
-  auto abs_diff = std::abs(diff);
-  if (ApproximatelyEqual(abs_diff, params_.PointsLeading()) ||
-      abs_diff < params_.PointsLeading())
-    return false;
-  auto& winner = diff < 0 ? opponent_ : current_;
-  LOGI("Points leading condition met");
-  LOGI("{} leads with {:.2f} points", winner->player->Name(), abs_diff);
-  return true;
+void Table::LogTurnInfo(const Export::RowLabel label) const {
+  using Label = Export::RowLabel;
+  switch (label) {
+    case Label::kIn:
+    case Label::kOut: {
+      auto l = label == Label::kIn ? "IN" : "OUT";
+      export_.PushRow(turns_, subturn_, current_->player->Name(), l,
+                      current_->controlled.Size(), current_->discarded.Size(),
+                      current_->hand.Size(), std::nullopt, std::nullopt,
+                      std::nullopt, std::nullopt, std::nullopt, std::nullopt,
+                      std::nullopt, std::nullopt, std::nullopt, std::nullopt);
+      break;
+    }
+    case Label::kCard: {
+      auto card = current_->current_card;
+      auto attrs = card->GetAttrs();
+      auto traits = card->GetTraits();
+      export_.PushRow(turns_, subturn_, current_->player->Name(), "CARD",
+                      std::nullopt, std::nullopt, std::nullopt,
+                      card->GetStrength(), attrs.water, attrs.fire,
+                      attrs.nature, traits.swift, traits.symbiotic,
+                      traits.poisonous, traits.empowering, traits.sabotaging,
+                      traits.supporting);
+      break;
+    }
+    default:
+      LOGW("Unknown label for turn log");
+  }
 }
 
 void Table::PlaySubTurn() {
   ScopeTrace scope{"PlaySubTurn"};
+  LogTurnInfo(Export::RowLabel::kIn);
   LOGD("controlled {} discarded {} hand {}", current_->controlled.Size(),
        current_->discarded.Size(), current_->hand.Size());
   Card* last_card = nullptr;
@@ -130,6 +152,7 @@ void Table::PlaySubTurn() {
     while ((card = played_queue_.Pull()) != nullptr) {
       current_->controlled.Push(card);
       current_->current_card = card;
+      LogTurnInfo(Export::RowLabel::kCard);
       RunTasks();
       if (last_card_ != nullptr) {
         card->ApplyAttrs(*last_card_);
@@ -148,6 +171,8 @@ void Table::PlaySubTurn() {
        opponent_->controlled.GetStrength());
   SwapPlayers();
   // When last_card is null, it indicates that no card was played this subturn.
+  LogTurnInfo(Export::RowLabel::kOut);
+  subturn_ = subturn_ == 1 ? 2 : 1;
 }
 
 void Table::PushTask(Trait* task) {
@@ -194,10 +219,26 @@ GameState::StatusType Table::ResolveFinalResult() {
     return GameState::kDraw;
   }
   auto diff = current - opponent;
-  auto& winner = diff < 0 ? opponent_ : current_;
-  LOGI("{} leads with {:.2f} points", winner->player->Name(), std::abs(diff));
-  // Save some information about winner/loser.
+  // If a winner can be emerged, then set current player as the winner.
+  if (diff < 0) current_.swap(opponent_);
+  LOGI("{} leads with {:.2f} points", current_->player->Name(), std::abs(diff));
   return GameState::kDone;
+}
+
+bool Table::ResolveLeadingCondition() {
+  if (params_.PointsLeading() == 0) return false;
+  auto current = current_->controlled.GetStrength();
+  auto opponent = opponent_->controlled.GetStrength();
+  auto diff = current - opponent;
+  auto abs_diff = std::abs(diff);
+  if (ApproximatelyEqual(abs_diff, params_.PointsLeading()) ||
+      abs_diff < params_.PointsLeading())
+    return false;
+  // If a winner can be emerged, then set current player as the winner.
+  if (diff < 0) current_.swap(opponent_);
+  LOGI("Points leading condition met");
+  LOGI("{} leads with {:.2f} points", current_->player->Name(), abs_diff);
+  return true;
 }
 
 void Table::RunTasks() {
@@ -234,11 +275,19 @@ TaskCtx Table::TaskContext(std::shared_ptr<PlayerCtx> owner) {
 
 Game::Game(const GameParams& params) : params_(params){};
 
-bool Game::InitGame() {
+bool Game::InitGame(const char* output_dir) {
   if (state_.Status() != GameState::kUninitialised) {
     LOGE("Cannot initialise the game again");
     return false;
   }
+
+  try {
+    export_ = std::make_unique<Export>(output_dir);
+  } catch (std::filesystem::filesystem_error& e) {
+    LOGC(e.what());
+    return false;
+  }
+  export_->DumpGameParams(params_);
 
   CardGenerator gen{params_};
   CardsPool pool{};
@@ -254,7 +303,7 @@ bool Game::InitGame() {
         std::make_unique<Player>(std::move(deck), "P" + std::to_string(i + 1));
   }
 
-  table_ = std::make_unique<Table>(params_, std::move(players[0]),
+  table_ = std::make_unique<Table>(params_, *export_, std::move(players[0]),
                                    std::move(players[1]));
 
   state_.Set(GameState::kInitialised);
@@ -269,5 +318,9 @@ GameResult Game::Run() {
   }
 
   while (state_.CanRun()) state_.Set(table_->PlayTurn());
+
+  if (state_.Ok()) table_->GetFinalResult(state_);
+  export_->DumpFinalResult(state_);
+
   return state_;
 }

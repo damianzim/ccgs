@@ -9,6 +9,7 @@
 #include "args.hpp"
 #include "cards.hpp"
 #include "common.hpp"
+#include "export.hpp"
 #include "player.hpp"
 #include "random.hpp"
 
@@ -42,6 +43,14 @@ class GameParams {
 class GameResult {
  public:
   using StatusType = int;
+
+  struct FinalPlayerResult {
+    std::string_view name;
+    float strength;
+  };
+
+  using FinalResultType = FinalPlayerResult[2];
+
   enum : StatusType {
     kUninitialised,
     kInitialised,
@@ -51,6 +60,7 @@ class GameResult {
     kDone,
   };
 
+  FinalResultType const& FinalResult() const { return final_; }
   inline bool Ok() const { return status_ == kDone || status_ == kDraw; }
   StatusType Status() const { return status_; }
   std::string_view StatusStringify() const {
@@ -73,6 +83,7 @@ class GameResult {
   }
 
  protected:
+  FinalPlayerResult final_[2]{};
   int status_{kUninitialised};
 };
 
@@ -83,6 +94,13 @@ class GameState : public GameResult {
   }
 
   void Set(StatusType state) { status_ = state; }
+  void Set(const std::string_view& p1_name, const float p1_strength,
+           const std::string_view& p2_name, const float p2_strength) {
+    final_[0].name = p1_name;
+    final_[0].strength = p1_strength;
+    final_[1].name = p2_name;
+    final_[1].strength = p2_strength;
+  }
 };
 
 enum class TaskOwner {
@@ -113,10 +131,11 @@ class Table {
   friend void Traits::ApplyTraits(Table&);
 
  public:
-  Table(const GameParams& params, std::unique_ptr<Player> p1,
+  Table(const GameParams& params, Export& export_, std::unique_ptr<Player> p1,
         std::unique_ptr<Player> p2);
   ~Table();
 
+  void GetFinalResult(GameState& state);
   GameState::StatusType PlayTurn();
 
  private:
@@ -124,11 +143,12 @@ class Table {
 
   const GameParams& params_;
 
-  bool ResolveLeadingCondition() const;
+  void LogTurnInfo(Export::RowLabel label) const;
 
   void PlaySubTurn();
   void PushTask(Trait* task);
   GameState::StatusType ResolveFinalResult();
+  bool ResolveLeadingCondition();
   void RunTasks();
   void SwapPlayers();
   TaskCtx TaskContext(std::shared_ptr<PlayerCtx> owner);
@@ -136,8 +156,10 @@ class Table {
   std::shared_ptr<PlayerCtx> current_;
   std::shared_ptr<PlayerCtx> opponent_;
 
+  Export& export_;
   Card const* last_card_;
   CardsQueue played_queue_;
+  int subturn_{1};
   TaskQueue tasks_;
   int turns_{0};
 };
@@ -146,7 +168,7 @@ class Game {
  public:
   Game(const GameParams& params);
 
-  bool InitGame();
+  bool InitGame(const char* output_dir);
   GameResult Run();
 
  private:
@@ -154,6 +176,7 @@ class Game {
 
   void SetState(GameResult::StatusType state);
 
+  std::unique_ptr<Export> export_;
   std::unique_ptr<Table> table_;
   GameState state_;
 };
