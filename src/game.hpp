@@ -131,7 +131,7 @@ class Table {
   friend void Traits::ApplyTraits(Table&);
 
  public:
-  Table(const GameParams& params, std::unique_ptr<Player> p1,
+  Table(const GameParams& params, Export& export_, std::unique_ptr<Player> p1,
         std::unique_ptr<Player> p2);
   ~Table();
 
@@ -142,6 +142,8 @@ class Table {
   using TaskQueue = std::list<std::pair<std::shared_ptr<PlayerCtx>, Trait*> >;
 
   const GameParams& params_;
+
+  void LogTurnInfo(Export::RowLabel label) const;
 
   void PlaySubTurn();
   void PushTask(Trait* task);
@@ -154,8 +156,10 @@ class Table {
   std::shared_ptr<PlayerCtx> current_;
   std::shared_ptr<PlayerCtx> opponent_;
 
+  Export& export_;
   Card const* last_card_;
   CardsQueue played_queue_;
+  int subturn_{1};
   TaskQueue tasks_;
   int turns_{0};
 };

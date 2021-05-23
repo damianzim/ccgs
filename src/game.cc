@@ -68,11 +68,12 @@ struct Table::PlayerCtx {
   std::unique_ptr<Player> player;
 };
 
-Table::Table(const GameParams& params, std::unique_ptr<Player> p1,
-             std::unique_ptr<Player> p2)
+Table::Table(const GameParams& params, Export& export_,
+             std::unique_ptr<Player> p1, std::unique_ptr<Player> p2)
     : params_(params),
       current_(std::make_shared<PlayerCtx>()),
       opponent_(std::make_shared<PlayerCtx>()),
+      export_(export_),
       last_card_(nullptr) {
   current_->player = std::move(p1);
   opponent_->player = std::move(p2);
@@ -92,11 +93,11 @@ void Table::GetFinalResult(GameState& state) {
 
 GameState::StatusType Table::PlayTurn() {
   ScopeTrace scope{"PlayTurn"};
+  ++turns_;
   PlaySubTurn();
   // Do not begin next turn if the 'first' player has no more cards.
   if (last_card_ == nullptr) return ResolveFinalResult();
   PlaySubTurn();
-  ++turns_;
   if (turns_ == params_.TurnLimit()) {
     LOGW("The turn limit has been reached");
     return ResolveFinalResult();
@@ -108,8 +109,39 @@ GameState::StatusType Table::PlayTurn() {
   return ResolveLeadingCondition() ? GameState::kDone : GameState::kInProgress;
 }
 
+void Table::LogTurnInfo(const Export::RowLabel label) const {
+  using Label = Export::RowLabel;
+  switch (label) {
+    case Label::kIn:
+    case Label::kOut: {
+      auto l = label == Label::kIn ? "IN" : "OUT";
+      export_.PushRow(turns_, subturn_, current_->player->Name(), l,
+                      current_->controlled.Size(), current_->discarded.Size(),
+                      current_->hand.Size(), std::nullopt, std::nullopt,
+                      std::nullopt, std::nullopt, std::nullopt, std::nullopt,
+                      std::nullopt, std::nullopt, std::nullopt, std::nullopt);
+      break;
+    }
+    case Label::kCard: {
+      auto card = current_->current_card;
+      auto attrs = card->GetAttrs();
+      auto traits = card->GetTraits();
+      export_.PushRow(turns_, subturn_, current_->player->Name(), "CARD",
+                      std::nullopt, std::nullopt, std::nullopt,
+                      card->GetStrength(), attrs.water, attrs.fire,
+                      attrs.nature, traits.swift, traits.symbiotic,
+                      traits.poisonous, traits.empowering, traits.sabotaging,
+                      traits.supporting);
+      break;
+    }
+    default:
+      LOGW("Unknown label for turn log");
+  }
+}
+
 void Table::PlaySubTurn() {
   ScopeTrace scope{"PlaySubTurn"};
+  LogTurnInfo(Export::RowLabel::kIn);
   LOGD("controlled {} discarded {} hand {}", current_->controlled.Size(),
        current_->discarded.Size(), current_->hand.Size());
   Card* last_card = nullptr;
@@ -120,6 +152,7 @@ void Table::PlaySubTurn() {
     while ((card = played_queue_.Pull()) != nullptr) {
       current_->controlled.Push(card);
       current_->current_card = card;
+      LogTurnInfo(Export::RowLabel::kCard);
       RunTasks();
       if (last_card_ != nullptr) {
         card->ApplyAttrs(*last_card_);
@@ -138,6 +171,8 @@ void Table::PlaySubTurn() {
        opponent_->controlled.GetStrength());
   SwapPlayers();
   // When last_card is null, it indicates that no card was played this subturn.
+  LogTurnInfo(Export::RowLabel::kOut);
+  subturn_ = subturn_ == 1 ? 2 : 1;
 }
 
 void Table::PushTask(Trait* task) {
@@ -268,7 +303,7 @@ bool Game::InitGame(const char* output_dir) {
         std::make_unique<Player>(std::move(deck), "P" + std::to_string(i + 1));
   }
 
-  table_ = std::make_unique<Table>(params_, std::move(players[0]),
+  table_ = std::make_unique<Table>(params_, *export_, std::move(players[0]),
                                    std::move(players[1]));
 
   state_.Set(GameState::kInitialised);

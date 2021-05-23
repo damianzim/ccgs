@@ -33,6 +33,8 @@ Export::Export(fs::path dir) {
   LOGI("Simulation output dir {}", dir.c_str());
 
   json_out_.open(dir / "simulation.json", ios::out | ios::trunc);
+  csv_out_.open(dir / "simulation.csv", ios::out | ios::trunc);
+  csv_.AssociateStream(&csv_out_);
 
   json_.SetObject();
 };
@@ -43,6 +45,7 @@ Export::~Export() {
   json_.Accept(writer);
   json_out_ << s.GetString();
 
+  csv_out_.close();
   json_out_.close();
 }
 

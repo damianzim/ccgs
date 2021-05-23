@@ -4,7 +4,7 @@ Output columns (in csv file):
 - turn              | int
 - subturn           | int
 - player_name       | string
-- stage             | string -> {IN, OUT}
+- label             | string -> {IN, CARD, OUT}
 
 # player details at specific point
 - controlled        | int
