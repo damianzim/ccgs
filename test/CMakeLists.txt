@@ -3,10 +3,11 @@ project(${PROJECT_NAME})
 
 set(CCGS_TESTS_SOURCE
   args_test.cc
-  cards_test.cc
+  cards_pool_test.cc
   common_test.cc
-  game_test.cc
+  game_params_test.cc
   random_test.cc
+  traits_test.cc
 )
 
 add_executable(ccgs_tests ${CCGS_TESTS_SOURCE})

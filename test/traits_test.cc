@@ -1,12 +1,6 @@
-#include "cards.hpp"
+#include "traits.hpp"
 
 #include <gtest/gtest.h>
-
-#include <optional>
-
-#include "args.hpp"
-#include "game.hpp"
-#include "random.hpp"
 
 inline bool operator==(const Traits::TraitsTable& lhs,
                        const Traits::TraitsTable& rhs) {
@@ -29,15 +23,4 @@ TEST(TraitsTest, CorrectPurchases) {
 
   ttable = {0, 0, 0, 0, 1, 0};
   ASSERT_EQ(Traits(3).GetTraits(), ttable);
-}
-
-TEST(CardsPoolTest, PoolInitialisation) {
-  CardsPool pool;
-  auto params = GameParams::Parse(Args{});
-  CardGenerator gen{*params};
-  pool.InitPool(*params, gen);
-
-  auto deck = pool.GetDeck(*params);
-  ASSERT_TRUE(deck);
-  ASSERT_EQ(deck->Size(), params->DeckSize());
 }

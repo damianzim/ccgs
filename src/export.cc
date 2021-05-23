@@ -4,6 +4,7 @@
 
 #include "common.hpp"
 #include "game.hpp"
+#include "game_params.hpp"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
 

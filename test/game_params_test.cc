@@ -1,11 +1,10 @@
-#include "game.hpp"
-
 #include <gtest/gtest.h>
 
 #include <optional>
 
 #include "args.hpp"
 #include "common.hpp"
+#include "game_params.hpp"
 
 struct GameParamsMembers {
   int balance;

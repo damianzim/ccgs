@@ -29,20 +29,37 @@ add_subdirectory(doc)
 set(CCGS_SOURCE
   src/args.cc
   src/card.cc
-  src/cards.cc
+  src/cards_pool.cc
+  src/cards_queue.cc
   src/common.cc
+  src/deck.cc
   src/export.cc
   src/game.cc
+  src/game_params.cc
+  src/game_result.cc
+  src/game_state.cc
+  src/table.cc
   src/random.cc
+  src/trait_impl.cc
+  src/traits.cc
 
   src/args.hpp
   src/card.hpp
-  src/cards.hpp
+  src/cards_pool.hpp
+  src/cards_queue.hpp
   src/common.hpp
+  src/deck.hpp
   src/export.hpp
   src/game.hpp
+  src/game_params.hpp
+  src/game_result.hpp
+  src/game_state.hpp
   src/player.hpp
   src/random.hpp
+  src/table.hpp
+  src/trait.hpp
+  src/trait_impl.hpp
+  src/traits.hpp
 )
 
 add_library(ccgslib STATIC ${CCGS_SOURCE})

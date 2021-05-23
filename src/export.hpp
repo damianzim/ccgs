@@ -12,14 +12,14 @@
 class GameParams;
 class GameResult;
 
+enum class ExportRowLabel {
+  kIn,
+  kCard,
+  kOut,
+};
+
 class Export {
  public:
-  enum class RowLabel {
-    kIn,
-    kCard,
-    kOut,
-  };
-
   Export(std::filesystem::path dir);
   ~Export();
 

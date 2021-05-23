@@ -1,7 +1,7 @@
 #include "random.hpp"
 
 #include "card.hpp"
-#include "game.hpp"
+#include "game_params.hpp"
 
 unsigned long DeviceGenerator::Random() { return gen_(); }
 

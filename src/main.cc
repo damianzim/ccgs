@@ -2,9 +2,9 @@
 #include <string>
 
 #include "args.hpp"
-#include "cards.hpp"
 #include "common.hpp"
 #include "game.hpp"
+#include "game_params.hpp"
 
 static const char* prog;
 [[noreturn]] void Usage(int exit_status = EXIT_FAILURE);

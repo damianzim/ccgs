@@ -4,8 +4,7 @@
 #include <memory>
 #include <string>
 
-#include "cards.hpp"
-
+#include "deck.hpp"
 class Player {
  public:
   Player(std::unique_ptr<Deck> deck, std::string name = "UNNAMED")
