@@ -17,7 +17,7 @@
 #define SPDLOG_ACTIVE_LEVEL COMPILE_TIME_LOG_LEVEL
 #endif  // SPDLOG_ACTIVE_LEVEL
 
-#include <spdlog/spdlog.h>
+#include "spdlog/spdlog.h"
 
 #define LOGT spdlog::trace
 #define LOGD spdlog::debug

@@ -1,6 +1,6 @@
 #include "common.hpp"
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 TEST(ParserTest, ParseIntInvalidInput) {
   ASSERT_FALSE(Parser::ParseInt("0x10000000000000000").has_value());

@@ -1,8 +1,8 @@
 #include "args.hpp"
 
-#include <gtest/gtest.h>
-
 #include <string>
+
+#include "gtest/gtest.h"
 
 TEST(ArgumentParserResolveArgsTest, InvalidArgumentArray) {
   Args args;

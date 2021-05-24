@@ -72,18 +72,16 @@ ForEachMacros:
   - BOOST_FOREACH
 IncludeBlocks:   Regroup
 IncludeCategories:
-  - Regex:           '^<ext/.*\.h>'
-    Priority:        2
-    SortPriority:    0
+  - Regex:           '^(<|")(gtest|gmock|libcsv|rapidjson|spdlog)/'
+    Priority:        3
+    SortPriority:    3
   - Regex:           '^<.*\.h>'
     Priority:        1
-    SortPriority:    0
-  - Regex:           '^<.*'
+  - Regex:           '<.*>'
     Priority:        2
-    SortPriority:    0
   - Regex:           '.*'
     Priority:        3
-    SortPriority:    0
+    SortPriority:    4
 IncludeIsMainRegex: '([-_](test|unittest))?$'
 IncludeIsMainSourceRegex: ''
 IndentCaseLabels: true

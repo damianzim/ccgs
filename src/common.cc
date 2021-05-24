@@ -1,7 +1,7 @@
 #include "common.hpp"
 
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/stdout_sinks.h>
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/stdout_sinks.h"
 
 void ConfigureLogger(LogLevel level) {
   auto logger = spdlog::stdout_color_st("ccgs");

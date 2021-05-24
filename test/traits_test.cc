@@ -1,6 +1,6 @@
 #include "traits.hpp"
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 inline bool operator==(const Traits::TraitsTable& lhs,
                        const Traits::TraitsTable& rhs) {

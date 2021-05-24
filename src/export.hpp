@@ -4,10 +4,10 @@
 #include <filesystem>
 #include <fstream>
 
-#include "common.hpp"
 #include "libcsv/builder.h"
 #include "libcsv/type.h"
 #include "rapidjson/document.h"
+#include "common.hpp"
 
 class GameParams;
 class GameResult;

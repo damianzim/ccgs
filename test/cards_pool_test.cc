@@ -1,9 +1,8 @@
 #include "cards_pool.hpp"
 
-#include <gtest/gtest.h>
-
 #include <optional>
 
+#include "gtest/gtest.h"
 #include "args.hpp"
 #include "game_params.hpp"
 #include "random.hpp"

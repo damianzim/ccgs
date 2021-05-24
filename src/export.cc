@@ -2,11 +2,12 @@
 
 #include <sstream>
 
+#include "gtest/gtest.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
 #include "common.hpp"
 #include "game.hpp"
 #include "game_params.hpp"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/writer.h"
 
 namespace fs = std::filesystem;
 
