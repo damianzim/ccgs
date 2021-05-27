@@ -129,9 +129,9 @@ void Table::PlaySubTurn() {
   LOGI("Strength after subturn {} {:6.2f} {} {:6.2f}", current_->player->Name(),
        current_->controlled.GetStrength(), opponent_->player->Name(),
        opponent_->controlled.GetStrength());
+  LogTurnInfo(ExportRowLabel::kOut);
   SwapPlayers();
   // When last_card is null, it indicates that no card was played this subturn.
-  LogTurnInfo(ExportRowLabel::kOut);
   subturn_ = subturn_ == 1 ? 2 : 1;
 }
 
