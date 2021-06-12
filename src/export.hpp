@@ -20,18 +20,30 @@ enum class ExportRowLabel {
 
 class Export {
  public:
+  // Construct an object of the export. Create directory `dir` if it does not
+  // exist. Create `dir`/simulation.json and `dir`/simulation.csv files for
+  // appropriate outputs if they do not exsit, otherwise wipe them. Open the
+  // streams for the output files. The constructor may throw execeptions that
+  // comes from the filesytem functions.
   Export(std::filesystem::path dir);
+
+  // Dump the simulation.csv and simulation.json files and close the streams.
   ~Export();
 
+  // Dump the json containing the final game result to the memory.
   void DumpFinalResult(const GameResult& result);
+
+  // Dump the json containing game params and their values to the memory.
   void DumpGameParams(const GameParams& params);
 
+  // Dump csv row to the output file.
   template <typename... Args>
   void PushRow(Args&&... args) {
     csv_.BuildRow(std::forward<Args>(args)...);
   }
 
  private:
+  // Get a reference to the allocator of the json file currently beign built.
   inline rapidjson::Document::AllocatorType& Alloc() {
     return json_.GetAllocator();
   }

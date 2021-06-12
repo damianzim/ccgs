@@ -43,11 +43,19 @@ class Table {
   friend void Traits::ApplyTraits(Table&);
 
  public:
+  // Construct an object of Table, assign players to it and initialise their
+  // hands with appropriate number of cards.
   Table(const GameParams& params, Export& export_, std::unique_ptr<Player> p1,
         std::unique_ptr<Player> p2);
+
+  // Destruct the object and its owned traits.
   ~Table();
 
+  // Save final result to the state object.
   void GetFinalResult(GameState& state);
+
+  // Play a turn which consists of two sub turns. At the end check if the game
+  // end condition is met.
   GameState::StatusType PlayTurn();
 
  private:
@@ -55,14 +63,30 @@ class Table {
 
   const GameParams& params_;
 
+  // Export current simulation snapshot depending on the `label` parameter.
   void LogTurnInfo(ExportRowLabel label) const;
 
+  // Play a sub turn and log the current simulation state to the file. During
+  // the sub turn there may be played more cards than one (played_queue_), but
+  // the limit is when the player's hand ran out of cards.
   void PlaySubTurn();
+
+  // Add a trait task to the tasks queue.
   void PushTask(Trait* task);
+
+  // Check if it is a draw or if there is a winner.
   GameState::StatusType ResolveFinalResult();
+
+  // Check if one of the two palyers is leading.
   bool ResolveLeadingCondition();
+
+  // Run the traits' tasks towards current player.
   void RunTasks();
+
+  // Swap current and opponent player.
   void SwapPlayers();
+
+  // Get the current game's context used to execute the traits.
   TaskCtx TaskContext(std::shared_ptr<PlayerCtx> owner);
 
   std::shared_ptr<PlayerCtx> current_;

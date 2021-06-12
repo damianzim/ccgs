@@ -17,6 +17,7 @@ class Card : public Traits {
     AttrValue nature;
   };
 
+  // Construct Card object with given attributes, strength and traits.
   Card(Attributes attrs, Strength strength, Traits&& traits);
   Card(const Card&) = default;
   Card(Card&&) = default;
@@ -26,7 +27,10 @@ class Card : public Traits {
   Strength GetStrength() const;
   Attributes GetAttrs() const;
 
+  // Apply the formula to reduce strength of this card depending on `previous`
+  // card (which should be the opponent's card last played card).
   void ApplyAttrs(const Card& previous);
+
   void SetAttrs(const Attributes& attrs);
   void SetStrength(const Strength& strength);
 

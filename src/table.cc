@@ -11,7 +11,7 @@
 
 namespace {
 
-/// @note The function expects that the arguments are positive.
+// Note: The function expects that the arguments are positive.
 bool ApproximatelyEqual(float a, float b) {
   return std::abs(a - b) <= (a < b ? b : a) * 0.001F;
 }

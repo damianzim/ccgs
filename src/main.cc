@@ -7,8 +7,13 @@
 #include "game_params.hpp"
 
 static const char* prog;
+
+// Print help to the stderr, end exit the program with `exit_status` code.
 [[noreturn]] void Usage(int exit_status = EXIT_FAILURE);
 
+// Initalise a logger with the level `default_level` or if `args` contains
+// 'level' option, with it. Return false if the option is invalid or the logger
+// itself could not been initialised, otherwise true.
 bool InitialiseLogger(const Args& args, LogLevel default_level);
 
 int main([[maybe_unused]] int argc, char* argv[]) {

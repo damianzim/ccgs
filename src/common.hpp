@@ -27,13 +27,18 @@
 #define LOGC spdlog::critical
 
 using LogLevel = spdlog::level::level_enum;
+
+// Configure run-time logger with given log level and custom formatting.
 void ConfigureLogger(LogLevel level = LogLevel::err);
 
 class ScopeTrace {
   const std::string_view name_;
 
  public:
+  // Log trace: [`scope_name`] [Begin], when constructing the object.
   ScopeTrace(const std::string_view& scope_name);
+
+  // Log trace: ['name_`] [End], when destructing the object.
   ~ScopeTrace();
 };
 
@@ -41,6 +46,8 @@ template <typename F>
 using Func = std::function<F>;
 
 struct Parser {
+  // Try to parse int represented by `str` string. If the string represents a
+  // valid number of base {0, 2, 3, ..., 36} - return it, otherwise nullopt.
   static std::optional<int> ParseInt(const char* str);
 };
 

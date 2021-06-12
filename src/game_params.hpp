@@ -8,6 +8,10 @@
 
 class GameParams {
  public:
+  // Return GameParams object. Look for valid game parameters in the `args`
+  //  object and try to parse them. If some parameter is present but contains
+  // invalid or illicit value at once return nullopt. By default the parameters
+  // adopt default values.
   static std::optional<GameParams> Parse(const Args& args);
 
   int Balance() const { return balance_; }
@@ -20,8 +24,13 @@ class GameParams {
  private:
   class InvalidParamValue;
 
+  // Construct GameParams object with uninitialised parameter values.
   GameParams(){};
 
+  // Look for and parse game parameter `name` in `args`. Parsed parameter's
+  // value should be in [min, max], otherwise throw
+  // GameParams::InvalidParamValue exception. If the parameter is not present
+  // return `default_value`.
   static int ParseParam(const Args& args, const std::string& name,
                         const int min, const int max, const int& default_value);
 

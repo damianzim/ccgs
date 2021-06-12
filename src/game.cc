@@ -16,6 +16,7 @@ bool Game::InitGame(const char* output_dir) {
   }
 
   try {
+    if (output_dir == nullptr) return false;
     export_ = std::make_unique<Export>(output_dir);
   } catch (std::filesystem::filesystem_error& e) {
     LOGC(e.what());

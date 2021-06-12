@@ -23,9 +23,16 @@ class GameResult {
     kDone,
   };
 
+  // Get final result object.
   FinalResultType const& FinalResult() const;
+
+  // Check whenever the game ended up with a correct result.
   bool Ok() const;
+
+  // Return current status value.
   StatusType Status() const;
+
+  // Get string corresponding to the `status_` value.
   std::string_view StatusStringify() const;
 
  protected:
