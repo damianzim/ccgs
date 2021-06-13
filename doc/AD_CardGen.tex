@@ -1,9 +1,6 @@
-\input{header}
 \begin{document}
-\centering
-\Huge{Activity diagram of a card generation}
-\normalsize
-\vspace{2cm}
+\section{Activity diagram of a card generation}
+\begin{center}
 
 \begin{tikzpicture}
 [baseshape/.style={minimum width=3.5cm, minimum height=1cm,text centered, font=\normalsize,draw=black, drop shadow=black!40},
@@ -32,13 +29,12 @@ node distance=3cm,]
     
     \draw (-4,1) -- node[at start, anchor=north west]{Card generation}(-1.2,1) -- (-1.2, 0.5) -- (-4, 0.5) -- (-4, 1) -- (10, 1) -- (10, -18) -- (-4,-18) -- (-4, 1);
 \end{tikzpicture}
-
+\end{center}
 \clearpage
 
-\Huge{Example of a single card generation}
-\normalsize
-\vspace{2cm}
+\section{Example of a single card generation}
 
+\begin{center}
 \begin{tikzpicture}
 [baseshape/.style={minimum width=3.5cm, minimum height=1cm,text centered, font=\normalsize,draw=black, drop shadow=black!40},
 startstop/.style={baseshape, ellipse, fill=red!30},
@@ -73,5 +69,6 @@ node distance=3cm,]
     \draw[arrow] (step6) -- (3,-18);
     
     \draw (-4,1) -- node[at start, anchor=north west]{Card generation}(-1.2,1) -- (-1.2, 0.5) -- (-4, 0.5) -- (-4, 1) -- (10, 1) -- (10, -18) -- (-4,-18) -- (-4, 1);
-\end{tikzpicture}
+\end{tikzpicture}    
+\end{center}
 \end{document}

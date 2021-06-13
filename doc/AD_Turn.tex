@@ -1,10 +1,7 @@
-\input{header}
 \begin{document}
-\centering 
-\Huge Activity diagram of a single turn
-\vspace{1cm}
-\normalsize
-    
+\section{Activity diagram of a single turn}
+\begin{center}
+
 \begin{tikzpicture}
 [baseshape/.style={minimum width=1.5cm, minimum height=1cm,text centered, font=\normalsize,draw=black, drop shadow=black!40},
 startstop/.style={baseshape, ellipse, fill=red!30},
@@ -42,5 +39,6 @@ node distance=2cm,]
 \draw[arrow] (step5) |- node[at start, anchor=north west]{F}(3, -15.6);
 \draw[arrow] (step5b) |- node[at start, anchor=north west]{F}(3, -15.7);
 
-\end{tikzpicture}
+\end{tikzpicture}    
+\end{center}
 \end{document}

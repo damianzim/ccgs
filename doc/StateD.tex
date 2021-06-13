@@ -1,10 +1,7 @@
-\input{header}
 \begin{document}
-\centering 
-\Huge State Machine Diagram
-\vspace{1cm}
-\normalsize
-    
+\section{State Machine Diagram}
+\begin{center}
+
 \begin{tikzpicture}
 [baseshape/.style={minimum width=1cm, minimum height=1cm,text centered, font=\normalsize,draw=black, drop shadow=black!40},
 startstop/.style={baseshape, circle, fill=black},
@@ -51,8 +48,8 @@ node distance=2cm,]
 \draw [arrow] (-5, -7) |- (step4);
 
 
-\end{tikzpicture}
-\\
+\end{tikzpicture}    
+\end{center}   
 \begin{flushleft}
 \textcolor{Aquamarine}{Game ends} \\
 \textcolor{RubineRed}{Card is selected by the player} \\

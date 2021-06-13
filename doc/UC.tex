@@ -1,11 +1,8 @@
-\input{header}
 \begin{document}
-
-
-
-\centering
-\Huge Use case diagram \\
+\section{Use case diagram}
 \vspace{2cm}
+\begin{center}
+
 \begin{tikzpicture}
 [baseshape/.style={minimum width=2.5cm, minimum height=1cm,text centered, font=\normalsize,draw=PineGreen, drop shadow=black!40},
 uc/.style={baseshape, rectangle, rounded corners, fill=green!30},
@@ -31,6 +28,7 @@ node distance=4cm,]
     \draw[arrow] (step1) -- (step6);
     \draw[arrow] (step1) -- (step7);
     \draw[arrow] (step1) -- (step8);
-\end{tikzpicture}
-
+\end{tikzpicture}    
+\end{center}
+\clearpage
 \end{document}

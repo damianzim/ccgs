@@ -1,10 +1,6 @@
-\input{header}
 \begin{document}
-\centering 
-\Huge Sequence diagram of tasks in simulation
-\vspace{1cm}
-\normalsize
-    
+\section{Sequence diagram of tasks in simulation}
+\begin{center}
 \begin{tikzpicture}
 [baseshape/.style={minimum width=2cm, minimum height=1cm,text centered, font=\normalsize,draw=black, drop shadow=black!40},
 startstop/.style={baseshape, ellipse, fill=red!30},
@@ -63,18 +59,6 @@ node distance=2cm,]
 
 \draw (0, -19) -- (2, -19);
 \draw[arrow] (2, -19) |- node[near start,anchor = west]{add task to the queue}(0, -20);
-
-
-
-
-
-
-
-
-
-
-
-
-
-\end{tikzpicture}
+\end{tikzpicture}    
+\end{center}    
 \end{document}

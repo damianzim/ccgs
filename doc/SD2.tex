@@ -1,10 +1,6 @@
-\input{header}
 \begin{document}
-\centering 
-\Huge Sequence diagram of \textit{attributes} application
-\vspace{1cm}
-\normalsize
-    
+\section{Sequence diagram of \textit{attributes} application}
+\begin{center}
 \begin{tikzpicture}
 [baseshape/.style={minimum width=2cm, minimum height=1cm,text centered, font=\normalsize,draw=black, drop shadow=black!40},
 startstop/.style={baseshape, ellipse, fill=red!30},
@@ -35,7 +31,6 @@ node distance=2cm,]
 \draw (0, -5) -- (2, -5);
 \draw[arrow] (2, -5) |- node[near start,anchor = west, text width = 5cm]{Reduce the \textbf{Strength} according to the appropriate formula}(0, -6);
 
-
-
-\end{tikzpicture}
+\end{tikzpicture}    
+\end{center}   
 \end{document}

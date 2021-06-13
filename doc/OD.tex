@@ -1,0 +1,74 @@
+\begin{document}
+\section{Object Diagram}
+\renewcommand{\arraystretch}{1.2}
+\begin{center}
+    
+\begin{tikzpicture}
+[baseshape/.style={text width=6cm, minimum width=6cm, minimum height=1cm, font=\normalsize,draw=black, drop shadow=black!40},
+process/.style={baseshape, rectangle, fill=ProcessBlue!50},
+node distance=5cm,]
+
+\node (cg) [process] {
+\begin{tabular}{l}
+    \Large{\textbf{Card generator}} \\ 
+    Balance = 20 \\
+    max\_ = 270 \\
+    min\_ = 230 
+    
+\end{tabular}
+};
+
+\node (card) [process, below of = cg] {
+\begin{tabular}{l}
+    \Large{\textbf{Card: Card}} \\ 
+    strength\_ = 4.1 
+    
+\end{tabular}
+};
+\node (attrs) [process, below of = card] {
+\begin{tabular}{l}
+    \Large{\textbf{attrs\_: Attributes}} \\ 
+    water = 2 \\
+    fire = 3 \\
+    nature = 5 
+    
+\end{tabular}
+};
+
+\node (dg) [process, right of= cg, xshift =4cm] {
+\Large{\textbf{gen\_: Device Generator}}
+};
+\node (mt) [process, below of= dg, yshift = 3cm] {
+\Large{\textbf{gen\_: mt18937}}
+};
+\node (Traits) [process, right of= card, xshift =4cm] {
+\Large{\textbf{Traits}}
+};
+\node (Traitst) [process, below of= Traits] {
+\begin{tabular}{l}
+    \Large{\textbf{table\_: TraitsTable}} \\ 
+    swift = true \\
+    symbiotic = true \\
+    poisonous = false \\
+    empowering = false \\
+    sabotaging = false \\
+    supporting = false 
+\end{tabular}
+};
+\node (Traitsv) [process, below of= Traitst] {
+\Large{\textbf{traits\_ std::vector$<$Trait*$>$}}
+};
+\node (Traitsp) [process, left of= Traitsv, xshift = -4cm] {
+\Large{\textbf{Trait*}}
+};
+\draw[-{Diamond[width=4mm, length= 6mm]}] (mt) -- node[anchor = west]{\normalsize{uses}}(dg);
+\draw[-{Diamond[width=4mm, length= 6mm]}] (dg) -- node[anchor = south]{\normalsize{creates}}(cg);
+\draw[-{Diamond[width=4mm, length= 6mm]}] (attrs) -- node[anchor = west]{\normalsize{stores information}}(card);
+\draw[-{Diamond[width=4mm, length= 6mm]}] (cg) -- node[anchor = west]{\normalsize{creates}}(card);
+\draw[-{Latex[open, width=4mm, length= 6mm]}] (card) -- node[anchor = south]{\normalsize{inherits}}(Traits);
+\draw[-{Diamond[width=4mm, length= 6mm]}] (Traitst) -- node[anchor = west]{\normalsize{stores information}}(Traits);
+\draw[-{Diamond[open, width=4mm, length= 6mm]}] (Traitsp) -- node[near end, anchor = south]{\normalsize{2}}(Traitsv);
+\draw[-{Diamond[width=4mm, length= 6mm]}] (6,-14.35) to [out=135,in=225] node[anchor = west]{\normalsize{stores}}(6, -5.5);
+\end{tikzpicture}
+\end{center}
+\end{document}
