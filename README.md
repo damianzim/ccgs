@@ -1,13 +1,9 @@
 # Collectible Card Game Simulation
-
-## License
-Each submodule is distributed under its specific license. One can see it in the relevant repository. To see the license content of the `rapidjson` library which is used in this project, see `lib/rapidjson/license.txt`.
-
 ## Running and developing
 
 ### Clone
 ```sh
-git clone git@github.com:damianzim/ccgs.git --recurse-submodules
+git clone --recurse-submodules git@github.com:damianzim/ccgs.git
 ```
 
 ### Build
@@ -22,3 +18,11 @@ make
 cd build/
 ctest -V
 ```
+
+## Third-party license
+
+* GoogleTest ([New BSD License](https://github.com/google/googletest/blob/master/LICENSE))
+* libcsv ([MIT License](https://github.com/damianzim/libcsv/blob/master/LICENSE))
+* RapidJSON ([BSD License](https://github.com/Tencent/rapidjson/blob/master/license.txt))
+* spdlog ([MIT License](https://github.com/gabime/spdlog/blob/v1.x/LICENSE))
+* UseLATEX ([New BSD License](https://gitlab.kitware.com/kmorel/UseLATEX/-/blob/master/LICENSE))
