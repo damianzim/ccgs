@@ -3,7 +3,7 @@
 
 ### Clone
 ```sh
-git clone --recurse-submodules git@github.com:damianzim/ccgs.git
+git clone --recurse-submodules https://github.com/damianzim/ccgs.git
 ```
 
 ### Build
